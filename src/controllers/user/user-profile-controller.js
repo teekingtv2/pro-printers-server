@@ -20,23 +20,18 @@ const getUser = async (req, res) => {
   });
 };
 
-const updateUserProfile = async (req, res, next) => {
+const updateUserProfile = async (req, res) => {
   const userId = req.id;
-  const { name } = req.body;
-
-  const user = await User.findById(userId);
-  if (!user) return sendError(res, 'Invalid user profile');
-
-  user.name = name;
   try {
-    await user.save();
+    const user = await User.findByIdAndUpdate(userId, { $set: req.body }, { new: true });
     return res.status(200).json({
       success: true,
-      message: 'Profile successfully updated',
+      message: 'Your profile contact data has been successfully updated',
+      data: user,
     });
   } catch (error) {
     console.log(err);
-    return sendError(res, err);
+    return sendError(res, 'Unable to update your profile data');
   }
 };
 
@@ -65,6 +60,21 @@ const updateUserPassword = async (req, res, next) => {
   } catch (error) {
     console.log(err);
     return sendError(res, err);
+  }
+};
+
+const updateUserEmailAlert = async (req, res) => {
+  const userId = req.id;
+  try {
+    const user = await User.findByIdAndUpdate(userId, { $set: req.body });
+    return res.status(200).json({
+      success: true,
+      message: 'You have updated your alert settings',
+      data: user,
+    });
+  } catch (error) {
+    console.log(err);
+    return sendError(res, 'Unable to update your alert settings');
   }
 };
 
@@ -131,6 +141,7 @@ module.exports = {
   getUser,
   updateUserProfile,
   updateUserPassword,
+  updateUserEmailAlert,
 
   getReferralProfile,
   withdrawReferralEarning,

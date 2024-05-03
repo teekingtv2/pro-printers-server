@@ -1,23 +1,14 @@
 const { log } = require('console');
-const { fetcher_tiqwa } = require('../../api/fetcher');
 const { sender_tiqwa } = require('../../api/sender');
-const Booking = require('../../models/Booking');
+const FlightBooking = require('../../models/FlightBooking');
 const { sendError } = require('../../utils/helpers');
 
-const fetchFlightBookingFromTiqwa = async (req, res) => {
-  const { booking_reference } = req.params;
-  const response = await fetcher_tiqwa(`/flight/${booking_reference}`);
-  log('response', response.data);
-  if (response?.status === 200) {
-    return res.status(response.status).json({ success: true, data: response.data });
-  } else {
-    return sendError(res, response?.data.message, response?.status);
-  }
-};
-
-const fetchAllBookings = async (req, res) => {
+//
+// Flight
+//
+const allFlightBookings = async (req, res) => {
   try {
-    const flightBookings = await Booking.find().limit(req.query.limit);
+    const flightBookings = await FlightBooking.find().limit(req.query.limit);
     if (flightBookings.length < 1) {
       return res.status(201).json({ success: true, message: 'No flight booking record found' });
     } else {
@@ -33,9 +24,9 @@ const fetchAllBookings = async (req, res) => {
   }
 };
 
-const fetchSingleBooking = async (req, res) => {
+const singleFlightBooking = async (req, res) => {
   try {
-    const flightBooking = await Booking.findById(req.params.id);
+    const flightBooking = await FlightBooking.findById(req.params.id);
     return res.status(200).json({
       success: true,
       message: 'Successfully fetched all flight bookings',
@@ -47,19 +38,65 @@ const fetchSingleBooking = async (req, res) => {
 };
 
 const issueFlightTicket = async (req, res) => {
+  const adminId = req.id;
   const { booking_reference } = req.params;
+
   const response = await sender_tiqwa(`/flight/pay/${booking_reference}`);
-  log('response', response.data);
+
   if (response?.status === 200) {
-    return res.status(response.status).json({ success: true, data: response.data });
+    try {
+      const booking = await FlightBooking.findOne({ booking_reference });
+      booking.status = 'issued';
+      booking.action_by = adminId;
+      await booking.save();
+      return res.status(response.status).json({ success: true, data: response.data });
+    } catch (error) {
+      log(error);
+      return sendError(
+        res,
+        'Ticket issued successfully. But the system could not update the booking record with new status',
+        204
+      );
+    }
   } else {
     return sendError(res, response?.data.message, response?.status);
   }
 };
 
+const cancelFlightTicket = async (req, res) => {
+  const { booking_reference } = req.params;
+  const adminId = req.id;
+  const response = await sender_tiqwa(`/flight/${booking_reference}`);
+
+  console.log(response.status);
+
+  if (response?.status === 200) {
+    try {
+      const booking = await FlightBooking.findOne({ booking_reference });
+      booking.status = 'canceled';
+      booking.action_by = adminId;
+      await booking.save();
+      return res.status(response.status).json({ success: true, data: response.data });
+    } catch (error) {
+      log(error);
+      return sendError(
+        res,
+        'Ticket canceled successfully. But the system could not update the booking record with new status',
+        204
+      );
+    }
+  } else {
+    return sendError(res, response?.data.message, response?.status);
+  }
+};
+
+//
+// Stays
+//
+
 module.exports = {
-  fetchFlightBookingFromTiqwa,
-  fetchAllBookings,
-  fetchSingleBooking,
+  allFlightBookings,
+  singleFlightBooking,
   issueFlightTicket,
+  cancelFlightTicket,
 };

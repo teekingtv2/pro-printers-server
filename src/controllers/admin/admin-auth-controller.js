@@ -136,7 +136,7 @@ const generateAdminLoginToken = async (req, res, next) => {
   });
   try {
     await adminLoginToken.save();
-    console.log('OTP sent');
+    console.log('OTP saved');
     req.body = {
       user: admin,
       otp,

@@ -1,7 +1,7 @@
 const { log } = require('console');
 const { fetcher_tiqwa } = require('../../api/fetcher');
 const { sender_tiqwa } = require('../../api/sender');
-const Booking = require('../../models/Booking');
+const FlightBooking = require('../../models/FlightBooking');
 const { sendError } = require('../../utils/helpers');
 const User = require('../../models/user/User');
 
@@ -47,9 +47,7 @@ const bookFlight = async (req, res) => {
   const userId = req.id;
   const { contact_details, passenger_details } = req.body;
   const client = passenger_details[0];
-  const client_name = `${client.first_name} ${client.last_name}`;
-  const client_phone = client.phone_number;
-  const client_email = client.email;
+
   log('flight_id', flight_id);
   log('client', client);
 
@@ -57,20 +55,24 @@ const bookFlight = async (req, res) => {
   console.log(user);
   if (!user) return sendError(res, 'Sorry, please login first');
 
+  if (user.email !== contact_details.c_email)
+    return sendError(res, 'Sorry, kindly use your registered email address fr easy circle backs');
+
   const response = await sender_tiqwa(`/flight/book/${flight_id}`, {
     passengers: passenger_details,
   });
   log('response', response.data);
   if (response?.status === 200) {
-    const contactDetails = new Booking({
+    const contactDetails = new FlightBooking({
       owner: user._id,
       type: 'flight',
-      client_name,
-      client_phone,
-      client_email,
-      contact_name: contact_details.name,
-      contact_phone: contact_details.phone,
-      contact_relationship: contact_details.contact_relationship,
+      client_name: `${client.first_name} ${client.last_name}`,
+      client_phone: client.phone_number,
+      client_email: client.email,
+      contact_name: `${contact_details.c_first_name} ${contact_details.c_last_name}`,
+      contact_email: contact_details.c_email,
+      contact_phone: contact_details.c_phone_number,
+      contact_relationship: contact_details.c_relationship_to_p,
       price: response?.data?.amount,
       status: response?.data?.status,
       booking_reference: response?.data.reference,

@@ -1,4 +1,3 @@
-const User = require('../../models/user/User');
 const VerificationToken = require('../../models/user/VerificationToken');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -10,7 +9,6 @@ const Host = require('../../models/host/Host');
 const signupHost = async (req, res, next) => {
   req.body.password = bcrypt.hashSync(req.body.password);
   const host = new Host(req.body);
-
   try {
     await host.save();
     console.log('Host successfully signed up');
@@ -210,16 +208,6 @@ const loginHost = async (req, res, next) => {
   next();
 };
 
-const isHostLogin = async (req, res) => {
-  const cookies = req.headers.cookie;
-  console.log('Session check cookie: ', cookies);
-  if (cookies) {
-    return res.status(200).json({ success: true, message: 'You are a logged in user' });
-  } else if (!cookies) {
-    return sendError(res, 'No session found. You are not logged in', 404);
-  }
-};
-
 const verifyHostLoginToken = (req, res, next) => {
   const cookies = req.headers.cookie;
   if (!cookies) {
@@ -238,27 +226,6 @@ const verifyHostLoginToken = (req, res, next) => {
   next();
 };
 
-const logoutHost = (req, res, next) => {
-  console.log('Logout api called');
-  const cookies = req.headers.cookie;
-  if (!cookies) {
-    return sendError(res, 'No cookie found.  You are never logged in to begin with', 401);
-  }
-  const token = cookies.split('=')[1];
-  console.log(token);
-  if (!token) {
-    return sendError(res, 'No token found.  You are never logged in to begin with', 401);
-  }
-  jwt.verify(String(token), process.env.JWT_HOST_SECRET_KEY, (err, host) => {
-    if (err) {
-      return sendError(res, 'Invalid Token.', 401);
-    }
-    res.clearCookie(`${host.id}`);
-    req.cookies[`${host.id}`] = '';
-    return res.status(200).json({ success: true, message: 'Successfully logged out' });
-  });
-};
-
 module.exports = {
   signupHost,
   generateHostEmailVerificationToken,
@@ -266,7 +233,5 @@ module.exports = {
   forgotPasswordHost,
   resetPasswordHost,
   loginHost,
-  isHostLogin,
   verifyHostLoginToken,
-  logoutHost,
 };

@@ -43,6 +43,14 @@ const userSchema = new Schema({
     type: String,
     default: 'Pending',
   },
+  priceAlert: {
+    type: Boolean,
+    default: true,
+  },
+  travelAlert: {
+    type: Boolean,
+    default: true,
+  },
   password: {
     type: String,
     required: true,

@@ -1,10 +1,15 @@
 const { check, validationResult } = require('express-validator');
 
+//
+// Website
+//
 exports.validateFlightOfferSearch = [
   check('origin').trim().not().isEmpty().withMessage('Where are you flying from?'),
   check('destination').trim().not().isEmpty().withMessage('Where are you flying to?'),
   check('departure_date').trim().not().isEmpty().withMessage('Provide the travel date'),
-  check('adults').trim().not().isEmpty().withMessage('Where are you flying to?'),
+  check('adults').trim().not().isEmpty().withMessage('How many adults are flying?'),
+  check('children').trim().not().isEmpty().withMessage('How many children are flying?'),
+  check('infants').trim().not().isEmpty().withMessage('How many infants are flying?'),
   check('cabin').trim().not().isEmpty().withMessage('Select flight class. E.g: economy'),
 ];
 
@@ -49,18 +54,118 @@ exports.validateSubscriptionParams = [
   check('country').trim().not().isEmpty().withMessage('Where are you from?'),
 ];
 
-exports.validateUserSignupParams = [
-  check('name')
+// Flight
+exports.validateFlightBooking = [
+  check('contact_details.c_first_name')
     .trim()
     .not()
     .isEmpty()
-    .withMessage('Name is missing!')
+    .withMessage('Contact First Name is missing!')
     .isLength({ min: 3, max: 20 })
-    .withMessage('Name must be between 3 and 25 characters'),
+    .withMessage('First Name must be between 3 and 20 characters'),
+  check('contact_details.c_last_name')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Contact Last Name is missing!')
+    .isLength({ min: 3, max: 20 })
+    .withMessage('Last Name must be between 3 and 20 characters'),
+  check('contact_details.c_email').isEmail().withMessage('Contact Email is invalid'),
+  check('contact_details.c_phone_number')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Contact Phone Number is missing!'),
+  check('contact_details.c_relationship_to_p')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Contact's relationship to passenger not specified"),
+  check('passenger_details[0].passenger_type')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Passenger type is not specified!'),
+  check('passenger_details[0].first_name')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Passenger First Name is missing!')
+    .isLength({ min: 3, max: 20 })
+    .withMessage('First Name must be between 3 and 20 characters'),
+  check('passenger_details[0].last_name')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Passenger Last Name is missing!')
+    .isLength({ min: 3, max: 20 })
+    .withMessage('Last Name must be between 3 and 20 characters'),
+  check('passenger_details[0].dob')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Passenger Date of Birth is missing!'),
+  check('passenger_details[0].gender')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Passenger Gender is missing!'),
+  check('passenger_details[0].title')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Passenger Title is missing!'),
+  check('passenger_details[0].email').isEmail().withMessage('Passenger Email is invalid'),
+  check('passenger_details[0].phone_number')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Passenger Phone Number is missing!'),
+];
+
+// User
+exports.validateUserSignupParams = [
+  check('first_name')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('First Name is missing!')
+    .isLength({ min: 3, max: 20 })
+    .withMessage('First Name must be between 3 and 25 characters'),
+  check('last_name')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Last Name is missing!')
+    .isLength({ min: 3, max: 20 })
+    .withMessage('Last Name must be between 3 and 25 characters'),
   check('email').isEmail().withMessage('Email is invalid'),
   check('password').trim().not().isEmpty().withMessage('Password cannot be empty'),
 ];
+exports.validateUpdateProfileUserParams = [
+  check('first_name')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('First Name is missing!')
+    .isLength({ min: 3, max: 20 })
+    .withMessage('First Name must be between 3 and 20 characters'),
+  check('last_name')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Last Name is missing!')
+    .isLength({ min: 3, max: 20 })
+    .withMessage('Last Name must be between 3 and 20 characters'),
+  check('username').trim().not().isEmpty().withMessage('Username is missing!'),
+  check('phone').trim().not().isEmpty().withMessage('Phone Number is missing!'),
+];
+exports.validateUpdateEmailAlertUserParams = [
+  check('priceAlert').trim().not().isEmpty().withMessage('Price Alert value is missing!'),
+  check('travelAlert').trim().not().isEmpty().withMessage('Travel Alert value is missing!'),
+];
 
+// Admin Dashboard
 exports.validateAdmin = [
   check('first_name')
     .trim()
@@ -93,6 +198,15 @@ exports.validateAddJob = [
   check('salary').trim().not().isEmpty().withMessage('Job base salary is missing!'),
 ];
 
+exports.validateAddPost = [
+  check('title').trim().not().isEmpty().withMessage('Post title is missing!'),
+  check('content').trim().not().isEmpty().withMessage('Post content is missing!'),
+  check('author').trim().not().isEmpty().withMessage('Post author is missing!'),
+  check('category').trim().not().isEmpty().withMessage('Post category is missing!'),
+  check('post_status').trim().not().isEmpty().withMessage('Post status is missing!'),
+];
+
+// Host dashboard
 exports.validateHostSignupParams = [
   check('hotel_name').trim().not().isEmpty().withMessage('Kindly provide your hotel name!'),
   check('country').trim().not().isEmpty().withMessage('Where is your hotel located?'),
@@ -132,6 +246,33 @@ exports.validateHostSignupParams = [
   check('contact_email').isEmail().withMessage('Contact Email is invalid'),
   check('contact_phone').trim().not().isEmpty().withMessage('Contact Phone Number is missing!'),
   check('password').trim().not().isEmpty().withMessage('Password cannot be empty'),
+];
+exports.validateUpdateProfileHostParams = [
+  check('contact_first_name')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('First Name is missing!')
+    .isLength({ min: 3, max: 20 })
+    .withMessage('First Name must be between 3 and 20 characters'),
+  check('contact_last_name')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('Last Name is missing!')
+    .isLength({ min: 3, max: 20 })
+    .withMessage('Last Name must be between 3 and 20 characters'),
+  check('contact_phone').trim().not().isEmpty().withMessage('Contact Phone Number is missing!'),
+];
+exports.validateUpdatePasswordParams = [
+  check('oldPassword').trim().not().isEmpty().withMessage('Old Password is missing!'),
+  check('newPassword')
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage('New Password is missing!')
+    .isLength({ min: 3, max: 20 })
+    .withMessage('Password must be between 8 and 20 characters long'),
 ];
 
 exports.validate = (req, res, next) => {

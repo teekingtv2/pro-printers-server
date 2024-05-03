@@ -9,11 +9,9 @@ const {
   signupHost,
   generateHostEmailVerificationToken,
   verifyHostEmail,
-  logoutHost,
   forgotPasswordHost,
   resetPasswordHost,
   loginHost,
-  isHostLogin,
 } = require('../../controllers/website/host-auth-controller');
 const {
   verificationEmail,
@@ -44,7 +42,5 @@ router.post(
   passwordUpdatedEmail
 );
 router.post('/login', validateHostLoginType, loginHost, loginSuccessfulEmail);
-router.get('/check-session', isHostLogin);
-router.post('/logout', logoutHost);
 
 module.exports = router;

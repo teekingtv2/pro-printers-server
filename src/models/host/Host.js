@@ -19,7 +19,7 @@ const hostSchema = new Schema({
     type: String,
     required: true,
   },
-  lga: {
+  neighborhood: {
     type: String,
     required: true,
   },
@@ -66,9 +66,6 @@ const hostSchema = new Schema({
   email_verified: {
     type: Boolean,
     default: false,
-  },
-  rooms: {
-    type: [String],
   },
   createdAt: {
     type: Date,

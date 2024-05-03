@@ -1,4 +1,5 @@
 const multer = require('multer');
+const path = require('path');
 
 const careerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -15,8 +16,26 @@ const careerStorage = multer.diskStorage({
   },
 });
 const carUpload = multer({ storage: careerStorage });
-const careerAppDocUpload = carUpload.fields([{ name: 'documents', maxCount: 30 }]);
+const careerAppDocUpload = carUpload.fields([{ name: 'documents', maxCount: 10 }]);
+
+const postStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/files/imgs/posts');
+  },
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.originalname.replace(/[^a-zA-Z0-9_.,]/g, '') +
+        '_' +
+        Date.now() +
+        path.extname(file.originalname)
+    );
+  },
+});
+const postUpload = multer({ storage: postStorage });
+const postImageUpload = postUpload.fields([{ name: 'cover_image', maxCount: 1 }]);
 
 module.exports = {
   careerAppDocUpload,
+  postImageUpload,
 };

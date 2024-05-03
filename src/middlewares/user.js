@@ -1,10 +1,10 @@
 const { isValidObjectId } = require('mongoose');
-const { sendError } = require('../utils/helpers');
+const { sendError, sendLoginError } = require('../utils/helpers');
 const User = require('../models/user/User');
 const ResetPasswordToken = require('../models/user/ResetPasswordToken');
 
 const validateNewUser = async (req, res, next) => {
-  const { name, email, password, referred_by } = req.body;
+  const { first_name, last_name, email, password, referred_by } = req.body;
   const refinedEmail = email.toLowerCase();
   let existingUser;
 
@@ -17,7 +17,8 @@ const validateNewUser = async (req, res, next) => {
     return sendError(res, 'Email already exists. Please login instead.');
   }
   req.body = {
-    name,
+    first_name,
+    last_name,
     email: refinedEmail,
     password,
     referred_by,
@@ -60,29 +61,29 @@ const validateLoginType = async (req, res, next) => {
     try {
       user = await User.findOne({ email: userIdentity });
     } catch (err) {
-      return sendError(res, err.message, 500);
+      return sendLoginError(res, err.message, 1, 500);
     }
     if (!user) {
-      return sendError(res, 'Email not registered. Signup instead.');
+      return sendLoginError(res, 'Email not registered. Signup instead.', 1);
     }
   } else if (loginId.charAt(0) === '+') {
     try {
       user = await User.findOne({ phone: loginId });
     } catch (err) {
-      return sendError(res, err.message, 500);
+      return sendLoginError(res, err.message, 1, 500);
     }
     if (!user) {
-      return sendError(res, 'Phone number not registered. Signup instead.');
+      return sendLoginError(res, 'Phone number not registered. Signup instead.', 0);
     }
   } else {
     userIdentity = loginId.toLowerCase();
     try {
       user = await User.findOne({ username: userIdentity });
     } catch (err) {
-      return sendError(res, err.message, 500);
+      return sendLoginError(res, err.message, 1, 500);
     }
     if (!user) {
-      return sendError(res, 'Username not registered. Signup instead.');
+      return sendLoginError(res, 'Username not registered. Signup instead.', 0);
     }
   }
 

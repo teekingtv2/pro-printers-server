@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    container_name: borderless_backend_c
+    image: devteeking/borderless_backend
+    ports:
+      - '2023:2023'
+    volumes:
+      - ./:/boderless/backend
+      - /boderless/backend/node_modules

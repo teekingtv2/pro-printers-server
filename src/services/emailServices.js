@@ -84,7 +84,8 @@ const emailVerifiedEmail = async (req, res) => {
     sendEmail(subject, email_body, send_to, send_from, reply_to);
     return res.status(200).json({
       success: true,
-      message: 'Your email has been successfully verified. You can now login',
+      loginStatus: 2,
+      message: 'Your email has been successfully verified, and you are noe logged in',
       user: {
         first_name: user.first_name,
         last_name: user.last_name,
@@ -159,6 +160,7 @@ const loginVerificationEmail = async (req, res) => {
 
     const email_body = verifyLoginCodeTemp(fName, otp);
     try {
+      console.log('OTP about to be sent');
       await sendEmail(subject, email_body, send_to, send_from, reply_to);
     } catch (error) {
       res.status(500).json(error.message);
@@ -192,6 +194,7 @@ const loginSuccessfulEmail = async (req, res) => {
     console.log('User details: ', user);
     return res.status(200).json({
       success: true,
+      loginStatus: 2,
       message: 'Successfully logged in',
       user: {
         first_name: firstName,

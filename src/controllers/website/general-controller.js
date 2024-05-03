@@ -60,6 +60,7 @@ const applyForJob = async (req, res, next) => {
   const formmatedImages = stringnifiedImages.replace(/[^a-zA-Z0-9_.,]/g, '');
   const documents = formmatedImages.replace(/[,]/g, ', ');
   const { first_name, last_name, email } = req.body;
+  console.log('documents: ', documents);
   const newApplication = new JobApplication({
     first_name,
     last_name,

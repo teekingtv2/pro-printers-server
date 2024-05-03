@@ -2,15 +2,20 @@ const User = require('../../models/user/User');
 const VerificationToken = require('../../models/user/VerificationToken');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { sendError, createRandomBytes, generateOTP } = require('../../utils/helpers');
+const {
+  sendError,
+  createRandomBytes,
+  generateOTP,
+  sendLoginError,
+  checkUserEmailReg,
+  sendSuccess,
+} = require('../../utils/helpers');
 const { isValidObjectId } = require('mongoose');
 const ResetPasswordToken = require('../../models/user/ResetPasswordToken');
 const UserReferral = require('../../models/user/UserReferral');
 
 const signup = async (req, res, next) => {
-  const { name, email, password, referred_by } = req.body;
-  const first_name = name.split(' ')[0];
-  const last_name = name.split(' ')[1];
+  const { first_name, last_name, email, password, referred_by } = req.body;
 
   const hashedPassword = bcrypt.hashSync(password);
   const user = new User({
@@ -117,9 +122,17 @@ const verifyEmail = async (req, res, next) => {
   await VerificationToken.findByIdAndDelete(vToken._id);
   await user.save();
   console.log('User verified');
-  req.body = {
-    user,
-  };
+
+  const loginTtoken = jwt.sign({ id: user._id }, process.env.JWT_USER_SECRET_KEY, {
+    expiresIn: '10d',
+  });
+  res.cookie(String(user._id), loginTtoken, {
+    path: '/',
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
+    httpOnly: true,
+    sameSite: 'lax',
+  });
+  req.body = { user };
   next();
 };
 
@@ -179,11 +192,12 @@ const login = async (req, res, next) => {
 
   const isPasswordCorrect = bcrypt.compareSync(password, user.password);
   if (!isPasswordCorrect) {
-    return sendError(res, 'Invalid login ID or password');
+    return sendLoginError(res, 'Invalid login ID or password', 0);
   }
   if (!user.email_verified) {
     return res.status(401).json({
       success: true,
+      loginStatus: 1,
       message: 'Unverified email',
       userId: user._id,
     });
@@ -209,7 +223,7 @@ const isUserLogin = async (req, res) => {
   if (cookies) {
     return res.status(200).json({ success: true, message: 'You are a logged in user' });
   } else if (!cookies) {
-    return sendError(res, 'No session found. You are not logged in', 404);
+    return sendError(res, 'No session found. You are not logged in');
   }
 };
 
@@ -239,18 +253,32 @@ const logout = (req, res, next) => {
     return sendError(res, 'No cookie found.  You are never logged in to begin with', 401);
   }
   const token = cookies.split('=')[1];
-  console.log(token);
+
+  console.info('token:', token);
+
   if (!token) {
     return sendError(res, 'No token found.  You are never logged in to begin with', 401);
   }
   jwt.verify(String(token), process.env.JWT_USER_SECRET_KEY, (err, user) => {
     if (err) {
-      return sendError(res, 'Invalid Token', 400);
+      return sendError(res, `Invalid Token - ${err}`, 400);
     }
     res.clearCookie(`${user.id}`);
     req.cookies[`${user.id}`] = '';
-    return res.status(200).json({ success: true, message: 'Successfully logged out' });
+    return sendSuccess(res, 'Successfully logged out');
+    // return res.status(200).json({ success: true, message: 'Successfully logged out' });
   });
+};
+
+const isEmailRegistered = async (req, res) => {
+  const { email } = req.body;
+  const user = await checkUserEmailReg(email);
+  console.log(user);
+  if (user) {
+    return sendSuccess(res, 'Email is registered', user);
+  } else {
+    return sendError(res, 'Email not registered');
+  }
 };
 
 module.exports = {
@@ -263,4 +291,5 @@ module.exports = {
   isUserLogin,
   verifyUserLoginToken,
   logout,
+  isEmailRegistered,
 };

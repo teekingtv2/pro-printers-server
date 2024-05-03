@@ -2,28 +2,51 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const flightBookingSchema = new Schema({
-  owner: {
+const shortLetSchema = new Schema({
+  hotel_name: {
     type: String,
     required: true,
   },
-  type: {
+  country: {
     type: String,
     required: true,
   },
-  client_name: {
+  state: {
     type: String,
     required: true,
   },
-  client_phone: {
+  city: {
     type: String,
     required: true,
   },
-  client_email: {
+  neighborhood: {
     type: String,
     required: true,
   },
-  contact_name: {
+  postal_code: {
+    type: String,
+    required: true,
+  },
+  address: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
+  website: {
+    type: String,
+  },
+  contact_first_name: {
+    type: String,
+    required: true,
+  },
+  contact_last_name: {
     type: String,
     required: true,
   },
@@ -35,29 +58,19 @@ const flightBookingSchema = new Schema({
     type: String,
     required: true,
   },
-  contact_relationship: {
+  password: {
     type: String,
     required: true,
+    minlength: 6,
   },
-  price: {
-    type: Number,
-    required: true,
+  email_verified: {
+    type: Boolean,
+    default: false,
   },
-  status: {
-    type: String,
-    required: true,
-  },
-  booking_reference: {
-    type: String,
-    required: true,
-  },
-  action_by: {
-    type: String,
-  },
-  created_at: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-module.exports = mongoose.model('FlightBooking', flightBookingSchema);
+module.exports = mongoose.model('ShortLet', shortLetSchema);

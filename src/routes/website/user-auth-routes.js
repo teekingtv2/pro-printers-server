@@ -8,6 +8,7 @@ const {
   generateEmailVerificationToken,
   logout,
   isUserLogin,
+  isEmailRegistered,
 } = require('../../controllers/website/user-auth-controller');
 const {
   verificationEmail,
@@ -41,5 +42,6 @@ router.post('/reset-password', isPasswordResetTokenValid, resetPassword, passwor
 router.post('/login', validateLoginType, login, loginSuccessfulEmail);
 router.get('/check-session', isUserLogin);
 router.post('/logout', logout);
+router.post('/check-email', isEmailRegistered);
 
 module.exports = router;
