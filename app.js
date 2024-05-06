@@ -56,7 +56,9 @@ app.use('/api/v1/flight', flightRouter);
 app.use('/api/v1/website', websiteRouter);
 
 app.get('/', (req, res) => {
-  res.send('Hello, welcome to Borderless Travels app. Server is running');
+  res.send(
+    'Hello, welcome to Borderless Travels app. Server is running with second update in May 2024'
+  );
 });
 
 app.listen(process.env.APP_PORT || 7000, () => {
