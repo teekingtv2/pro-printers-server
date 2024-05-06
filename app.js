@@ -57,7 +57,7 @@ app.use('/api/v1/website', websiteRouter);
 
 app.get('/', (req, res) => {
   res.send(
-    'Hello, welcome to Borderless Travels app. Server is running with second update in May 2024\n Fiex the get admin and get user endpoints'
+    'Hello, welcome to Borderless Travels app. Server is running with second update in May 2024\n Fixed the get admin and get user endpoints'
   );
 });
 

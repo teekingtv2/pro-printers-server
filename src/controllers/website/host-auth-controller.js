@@ -194,7 +194,8 @@ const loginHost = async (req, res, next) => {
     path: '/',
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5),
     httpOnly: true,
-    sameSite: 'lax',
+    // sameSite: 'lax',
+    sameSite: false,
   });
   req.body = {
     user: {
@@ -204,6 +205,7 @@ const loginHost = async (req, res, next) => {
       last_name: host.contact_last_name,
       email_verified: host.email_verified,
     },
+    token,
   };
   next();
 };

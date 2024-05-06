@@ -211,9 +211,10 @@ const login = async (req, res, next) => {
     path: '/',
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: false,
+    // sameSite: 'lax',
   });
-  req.body = { user };
+  req.body = { user, token };
   next();
 };
 
