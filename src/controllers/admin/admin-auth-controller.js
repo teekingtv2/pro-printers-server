@@ -136,7 +136,7 @@ const generateAdminLoginToken = async (req, res, next) => {
   });
   try {
     await adminLoginToken.save();
-    console.log('OTP saved');
+    console.log('OTP saved', otp);
     req.body = {
       user: admin,
       otp,
@@ -199,6 +199,7 @@ const isAdminLogin = async (req, res) => {
 
 const verifyAdminLoginToken = (req, res, next) => {
   const cookies = req.headers.cookie;
+  console.log('cookies:', cookies);
   if (!cookies) {
     return sendError(res, 'You are not authenticated or authorised to perform this operation');
   }

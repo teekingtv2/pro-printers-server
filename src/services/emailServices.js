@@ -175,7 +175,7 @@ const loginVerificationEmail = async (req, res) => {
   }
 };
 const loginSuccessfulEmail = async (req, res) => {
-  const { user } = req.body;
+  const { user, token } = req.body;
   const email = user.email;
   const firstName = user.first_name;
   try {
@@ -203,6 +203,7 @@ const loginSuccessfulEmail = async (req, res) => {
         id: user._id,
         email_verified: user.email_verified,
       },
+      token,
     });
   } catch (error) {
     res.status(500).json(error.message);
