@@ -195,7 +195,7 @@ const loginHost = async (req, res, next) => {
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5),
     httpOnly: true,
     // sameSite: 'lax',
-    sameSite: false,
+    sameSite: 'none',
   });
   req.body = {
     user: {
