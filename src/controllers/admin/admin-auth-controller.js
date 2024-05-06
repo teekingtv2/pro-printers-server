@@ -1,7 +1,7 @@
 const VerificationToken = require('../../models/user/VerificationToken');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { sendError, createRandomBytes, generateOTP } = require('../../utils/helpers');
+const { sendError, createRandomBytes, generateOTP, sendSuccess } = require('../../utils/helpers');
 const { isValidObjectId } = require('mongoose');
 const ResetPasswordToken = require('../../models/user/ResetPasswordToken');
 const Admin = require('../../models/admin/Admin');
@@ -215,6 +215,20 @@ const verifyAdminLoginToken = (req, res, next) => {
   next();
 };
 
+const getAdmin = async (req, res) => {
+  const adminId = req.id;
+  let admin;
+  try {
+    admin = await Admin.findById(adminId, '-password');
+  } catch (err) {
+    return sendError(res, err.message);
+  }
+  if (!admin) {
+    return sendError(res, 'Admin data not found');
+  }
+  return sendSuccess(res, 'successfully fetched admin data', admin);
+};
+
 const logoutAdmin = (req, res, next) => {
   console.log('Logout api called');
   const cookies = req.headers.cookie;
@@ -249,5 +263,8 @@ module.exports = {
 
   isAdminLogin,
   verifyAdminLoginToken,
+
+  getAdmin,
+
   logoutAdmin,
 };

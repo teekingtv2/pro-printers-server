@@ -13,6 +13,8 @@ const {
   verifyLoginAttempt,
   loginAdminAttempt,
   logAdminIn,
+  verifyAdminLoginToken,
+  getAdmin,
 } = require('../../controllers/admin/admin-auth-controller');
 const {
   emailVerifiedEmail,
@@ -37,6 +39,9 @@ router.post(
 
 router.post('/resend-login-otp', generateAdminLoginToken, loginVerificationEmail);
 router.post('/verify-login', verifyLoginAttempt, logAdminIn, loginSuccessfulEmail);
+
+router.get('/get-admin', verifyAdminLoginToken, getAdmin);
+
 router.get('/check-session', isAdminLogin);
 router.post('/logout', logoutAdmin);
 

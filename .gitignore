@@ -130,3 +130,8 @@ dist
 .pnp.*
 
 # Docker
+.dockerignore
+docker-compose.yml
+
+# Keys
+key/

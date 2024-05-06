@@ -1,6 +1,6 @@
 const VerificationToken = require('../../models/user/VerificationToken');
 const bcrypt = require('bcryptjs');
-const { sendError, generateOTP } = require('../../utils/helpers');
+const { sendError, generateOTP, sendSuccess } = require('../../utils/helpers');
 const Admin = require('../../models/admin/Admin');
 const { log } = require('console');
 
