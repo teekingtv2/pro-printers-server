@@ -52,6 +52,8 @@ const bookFlight = async (req, res) => {
   log('client', client);
 
   const user = await User.findById(userId, '-password');
+  let userBookings = user.bookings;
+  userBookings = userBookings + 1;
   console.log(user);
   if (!user) return sendError(res, 'Sorry, please login first');
 
@@ -78,6 +80,7 @@ const bookFlight = async (req, res) => {
       booking_reference: response?.data.reference,
     });
     await contactDetails.save();
+    await User.findByIdAndUpdate(userId, { bookings: userBookings });
     return res.status(response.status).json({ success: true, data: response.data });
   } else {
     return sendError(res, response?.data.message, response?.status);

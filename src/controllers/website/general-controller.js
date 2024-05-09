@@ -1,7 +1,7 @@
 const Job = require('../../models/general/Job');
 const JobApplication = require('../../models/general/JobApplication');
 const Subscriber = require('../../models/general/Subscriber');
-const { sendError } = require('../../utils/helpers');
+const { sendError, sendSuccess } = require('../../utils/helpers');
 
 const saveSubscriber = async (req, res) => {
   let existingContact;
@@ -11,18 +11,16 @@ const saveSubscriber = async (req, res) => {
       return sendError(res, 'You have already joined our list using this email address.');
     }
   } catch (error) {
-    if (existingContact) {
-      return sendError(res, 'Could not verify that you are not an existing contact');
-    }
+    return sendError(res, 'Could not verify that you are not an existing contact');
   }
   const newSubscriber = new Subscriber(req.body);
   try {
     await newSubscriber.save();
-    res.status(200).json({
-      success: true,
-      message: 'You have successfully subscribed to our mailing list. Watch our for future updates',
-      data: newSubscriber,
-    });
+    return sendSuccess(
+      res,
+      'You have successfully subscribed to our mailing list. Watch our for future updates',
+      newSubscriber
+    );
   } catch (error) {
     sendError(res, 'Could not save your details to our subscription list');
   }
@@ -55,6 +53,9 @@ const fetchSingleJobPosting = async (req, res, next) => {
 };
 const applyForJob = async (req, res, next) => {
   const rawImagesArray = req.files['documents'];
+  if (!rawImagesArray) {
+    return sendError(res, 'Please add the required documents');
+  }
   const namedImage = rawImagesArray.map((a) => a.filename);
   const stringnifiedImages = JSON.stringify(namedImage);
   const formmatedImages = stringnifiedImages.replace(/[^a-zA-Z0-9_.,]/g, '');

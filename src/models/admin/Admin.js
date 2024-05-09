@@ -36,6 +36,9 @@ const adminSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  avatar: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

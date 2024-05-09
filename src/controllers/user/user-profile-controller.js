@@ -1,5 +1,5 @@
 const User = require('../../models/user/User');
-const { sendError } = require('../../utils/helpers');
+const { sendError, sendSuccess, badRequestError } = require('../../utils/helpers');
 const UserReferral = require('../../models/user/UserReferral');
 const bcrypt = require('bcryptjs');
 
@@ -14,24 +14,39 @@ const getUser = async (req, res) => {
   if (!user) {
     return sendError(res, 'User not found');
   }
-  return res.status(200).json({
-    success: true,
-    data: user,
-  });
+  return sendSuccess(res, null, user);
 };
 
 const updateUserProfile = async (req, res) => {
   const userId = req.id;
   try {
     const user = await User.findByIdAndUpdate(userId, { $set: req.body }, { new: true });
-    return res.status(200).json({
-      success: true,
-      message: 'Your profile contact data has been successfully updated',
-      data: user,
-    });
+    return sendSuccess(res, 'Your profile contact data has been successfully updated', user);
   } catch (error) {
     console.log(err);
     return sendError(res, 'Unable to update your profile data');
+  }
+};
+
+const setUserProfileAvatar = async (req, res) => {
+  const rawImagesArray = req.files['avatar'];
+  if (!rawImagesArray) {
+    return badRequestError(res, 'Please add the image avatar to be uploaded');
+  }
+  const namedImage = rawImagesArray.map((a) => a.filename);
+  const stringnifiedImages = JSON.stringify(namedImage);
+  const formmatedImages = stringnifiedImages.replace(/[^a-zA-Z0-9_.,]/g, '');
+  const avatar = formmatedImages.replace(/[,]/g, ', ');
+  console.log('avatar: ', avatar);
+
+  try {
+    const savedProfile = await User.findByIdAndUpdate(req.params.id, {
+      avatar: avatar,
+    });
+    return sendSuccess(res, 'Successfully updated the profile avatar', savedProfile);
+  } catch (err) {
+    console.log(err);
+    return sendError(res, 'Unable to update the admin profile');
   }
 };
 
@@ -67,11 +82,7 @@ const updateUserEmailAlert = async (req, res) => {
   const userId = req.id;
   try {
     const user = await User.findByIdAndUpdate(userId, { $set: req.body });
-    return res.status(200).json({
-      success: true,
-      message: 'You have updated your alert settings',
-      data: user,
-    });
+    return sendSuccess(res, 'You have updated your alert settings', user);
   } catch (error) {
     console.log(err);
     return sendError(res, 'Unable to update your alert settings');
@@ -89,10 +100,7 @@ const getReferralProfile = async (req, res) => {
   if (!userReferrals) {
     return sendError(res, 'User not found');
   }
-  return res.status(200).json({
-    success: true,
-    data: userReferrals,
-  });
+  return sendSuccess(res, null, userReferrals);
 };
 
 const withdrawReferralEarning = async (req, res, next) => {
@@ -140,6 +148,7 @@ const withdrawReferralEarning = async (req, res, next) => {
 module.exports = {
   getUser,
   updateUserProfile,
+  setUserProfileAvatar,
   updateUserPassword,
   updateUserEmailAlert,
 

@@ -61,6 +61,10 @@ const userSchema = new Schema({
     default: false,
     required: true,
   },
+  bookings: {
+    type: Number,
+    default: 0,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

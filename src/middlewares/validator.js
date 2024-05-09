@@ -185,7 +185,6 @@ exports.validateAdmin = [
   check('phone').trim().not().isEmpty().withMessage('Phone Number is missing!'),
   check('role').trim().not().isEmpty().withMessage('Admin Role is missing!'),
   check('username').trim().not().isEmpty().withMessage('Admin Username is missing!'),
-  check('password').trim().not().isEmpty().withMessage('Password cannot be empty'),
 ];
 
 exports.validateAddJob = [
