@@ -1,5 +1,9 @@
 const express = require('express');
-const { validateHostSignupParams, validate } = require('../../middlewares/validator');
+const {
+  validateHostSignupParams,
+  validate,
+  validateUserSignupParams,
+} = require('../../middlewares/validator');
 const {
   validateNewHost,
   isHostPasswordResetTokenValid,
@@ -25,7 +29,7 @@ const router = express.Router();
 
 router.post(
   '/signup',
-  validateHostSignupParams,
+  validateUserSignupParams,
   validate,
   validateNewHost,
   signupHost,

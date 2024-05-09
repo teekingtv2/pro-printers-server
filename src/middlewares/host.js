@@ -4,65 +4,22 @@ const ResetPasswordToken = require('../models/user/ResetPasswordToken');
 const Host = require('../models/host/Host');
 
 const validateNewHost = async (req, res, next) => {
-  const {
-    hotel_name,
-    country,
-    state,
-    city,
-    lga,
-    postal_code,
-    hotel_address,
-    hotel_email,
-    hotel_phone,
-    hotel_website,
-    contact_first_name,
-    contact_last_name,
-    contact_email,
-    contact_phone,
-    password,
-  } = req.body;
-  const refinedHotelEmail = hotel_email.toLowerCase();
-  const refinedContactEmail = contact_email.toLowerCase();
-  let existingHotelEmail;
-  let existingContactEmail;
+  const { first_name, last_name, email, password } = req.body;
+  const refinedEmail = email.toLowerCase();
+  let existingEmail;
 
   try {
-    existingHotelEmail = await Host.findOne({ hotel_email: refinedHotelEmail });
+    existingEmail = await Host.findOne({ email: refinedEmail });
   } catch (err) {
     console.log(err);
   }
-  if (existingHotelEmail) {
-    return sendError(
-      res,
-      `Email already associated with another hotel - ${existingHotelEmail.hotel_name}. Please login instead.`
-    );
-  }
-  try {
-    existingContactEmail = await Host.findOne({ contact_email: refinedContactEmail });
-  } catch (err) {
-    console.log(err);
-  }
-  if (existingContactEmail) {
-    return sendError(
-      res,
-      `Email already associated with another hotel contact - ${existingContactEmail.hotel_name}. Please login instead.`
-    );
+  if (existingEmail) {
+    return sendError(res, `Email already associated with another account. Please login instead.`);
   }
   req.body = {
-    hotel_name,
-    country,
-    state,
-    city,
-    lga,
-    postal_code,
-    hotel_address,
-    hotel_email: refinedHotelEmail,
-    hotel_phone,
-    hotel_website,
-    contact_first_name,
-    contact_last_name,
-    contact_email: refinedContactEmail,
-    contact_phone,
+    first_name,
+    last_name,
+    email,
     password,
   };
   next();

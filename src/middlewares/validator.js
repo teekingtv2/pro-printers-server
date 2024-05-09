@@ -206,7 +206,7 @@ exports.validateAddPost = [
 ];
 
 // Host dashboard
-exports.validateHostSignupParams = [
+exports.validateAddPropertyParams = [
   check('hotel_name').trim().not().isEmpty().withMessage('Kindly provide your hotel name!'),
   check('country').trim().not().isEmpty().withMessage('Where is your hotel located?'),
   check('state').trim().not().isEmpty().withMessage('Which state is your hotel located?'),
@@ -246,22 +246,22 @@ exports.validateHostSignupParams = [
   check('contact_phone').trim().not().isEmpty().withMessage('Contact Phone Number is missing!'),
   check('password').trim().not().isEmpty().withMessage('Password cannot be empty'),
 ];
-exports.validateUpdateProfileHostParams = [
-  check('contact_first_name')
+exports.validateHostUpdateProfileParams = [
+  check('first_name')
     .trim()
     .not()
     .isEmpty()
     .withMessage('First Name is missing!')
     .isLength({ min: 3, max: 20 })
     .withMessage('First Name must be between 3 and 20 characters'),
-  check('contact_last_name')
+  check('last_name')
     .trim()
     .not()
     .isEmpty()
     .withMessage('Last Name is missing!')
     .isLength({ min: 3, max: 20 })
     .withMessage('Last Name must be between 3 and 20 characters'),
-  check('contact_phone').trim().not().isEmpty().withMessage('Contact Phone Number is missing!'),
+  check('phone').trim().not().isEmpty().withMessage('Contact Phone Number is missing!'),
 ];
 exports.validateUpdatePasswordParams = [
   check('oldPassword').trim().not().isEmpty().withMessage('Old Password is missing!'),

@@ -28,7 +28,7 @@ const updateHostProfile = async (req, res, next) => {
     const host = await Host.findByIdAndUpdate(userId, { $set: req.body }, { new: true });
     return res.status(200).json({
       success: true,
-      message: 'Your profile contact data has been successfully updated',
+      message: 'Your profile data has been successfully updated',
       data: host,
     });
   } catch (error) {
@@ -65,6 +65,28 @@ const updateHostPassword = async (req, res, next) => {
     next();
   } catch (error) {
     return sendError(res, 'Cannot update your password');
+  }
+};
+
+const setHostProfileAvatar = async (req, res) => {
+  const rawImagesArray = req.files['avatar'];
+  if (!rawImagesArray) {
+    return badRequestError(res, 'Please add the image avatar to be uploaded');
+  }
+  const namedImage = rawImagesArray.map((a) => a.filename);
+  const stringnifiedImages = JSON.stringify(namedImage);
+  const formmatedImages = stringnifiedImages.replace(/[^a-zA-Z0-9_.,]/g, '');
+  const avatar = formmatedImages.replace(/[,]/g, ', ');
+  console.log('avatar: ', avatar);
+
+  try {
+    const savedHostProfile = await Host.findByIdAndUpdate(req.params.id, {
+      avatar: avatar,
+    });
+    return sendSuccess(res, 'Successfully updated the profile avatar', savedHostProfile);
+  } catch (err) {
+    console.log(err);
+    return sendError(res, 'Unable to update the admin profile');
   }
 };
 
@@ -120,6 +142,7 @@ const logoutHost = (req, res, next) => {
 module.exports = {
   getHost,
   updateHostProfile,
+  setHostProfileAvatar,
   updateHostPassword,
   addProperty,
 

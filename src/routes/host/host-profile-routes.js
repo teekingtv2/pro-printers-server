@@ -8,12 +8,14 @@ const {
   updateHostPassword,
   logoutHost,
   isHostLogin,
+  setHostProfileAvatar,
 } = require('../../controllers/host/host-profile-controller');
 const {
-  validateUpdateProfileHostParams,
+  validateHostUpdateProfileParams,
   validate,
   validateUpdatePasswordParams,
 } = require('../../middlewares/validator');
+const { hostImageUpload } = require('../../utils/helpers/files');
 
 const router = express.Router();
 
@@ -22,10 +24,17 @@ router.get('/profile', verifyHostLoginToken, getHost);
 router.put(
   '/update-profile',
   verifyHostLoginToken,
-  validateUpdateProfileHostParams,
+  validateHostUpdateProfileParams,
   validate,
   updateHostProfile
 );
+router.put(
+  '/update-profile-avatar/:id',
+  verifyHostLoginToken,
+  hostImageUpload,
+  setHostProfileAvatar
+);
+
 router.put(
   '/update-password',
   verifyHostLoginToken,

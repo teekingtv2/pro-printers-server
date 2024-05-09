@@ -140,6 +140,7 @@ const forgotPasswordHost = async (req, res, next) => {
       last_name: host.contact_last_name,
       email_verified: host.email_verified,
     },
+    type: 'user',
     token,
   };
   next();
