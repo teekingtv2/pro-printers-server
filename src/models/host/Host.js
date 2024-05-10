@@ -18,6 +18,9 @@ const hostSchema = new Schema({
   phone: {
     type: String,
   },
+  gender: {
+    type: String,
+  },
   password: {
     type: String,
     required: true,
@@ -30,6 +33,25 @@ const hostSchema = new Schema({
   properties: {
     type: Number,
     default: 0,
+  },
+  guests: {
+    type: Number,
+    default: 0,
+  },
+  address: {
+    type: String,
+  },
+  city: {
+    type: String,
+  },
+  state: {
+    type: String,
+  },
+  nationality: {
+    type: String,
+  },
+  country: {
+    type: String,
   },
   email_verified: {
     type: Boolean,

@@ -24,6 +24,54 @@ const updateHostProfile = async (req, res) => {
   }
 };
 
+const blockHost = async (req, res) => {
+  try {
+    const host = await Host.findById(req.params.id);
+    if (!host) {
+      return badRequestError(res, 'Unable to verify host details');
+    }
+    if (host.status === 'Blocked') {
+      return badRequestError(
+        res,
+        `${host.first_name} ${host.last_name}'s account is already blocked`
+      );
+    }
+    host.status = 'Blocked';
+    await host.save();
+    return sendSuccess(res, `Host ${host.first_name} ${host.last_name} has been blocked`);
+  } catch (err) {
+    log(err);
+    return sendError(res, 'Unable to block the host account');
+  }
+};
+
+const unblockHost = async (req, res) => {
+  let status;
+  try {
+    const host = await Host.findById(req.params.id);
+    if (!host) {
+      return badRequestError(res, 'Unable to verify host details');
+    }
+    if (host.status === 'Pending' || host.status === 'Active') {
+      return badRequestError(
+        res,
+        `host ${host.first_name} ${host.last_name}'s account was not blocked`
+      );
+    }
+    if (host.email_verified) {
+      status = 'Active';
+    } else {
+      status = 'Pending';
+    }
+    host.status = status;
+    await host.save();
+    return sendSuccess(res, `Host ${host.first_name} ${host.last_name} is now active`);
+  } catch (err) {
+    log(err);
+    return sendError(res, 'Unable to block the host account');
+  }
+};
+
 const deleteHost = async (req, res) => {
   try {
     await Host.findByIdAndDelete(req.params.id);
@@ -37,12 +85,11 @@ const deleteHost = async (req, res) => {
   }
 };
 
-const fetchAllHosts = async (req, res, next) => {
-  const { min, max, ...others } = req.query;
+const fetchAllHosts = async (req, res) => {
+  const { ...others } = req.query;
   try {
     const hosts = await Host.find({
       ...others,
-      cheapestPrice: { $gt: min | 1, $lt: max || 999 },
     }).limit(req.query.limit);
     return res.status(200).json({ success: true, data: hosts });
   } catch (error) {
@@ -65,6 +112,8 @@ const fetchSingleHost = async (req, res, next) => {
 
 module.exports = {
   updateHostProfile,
+  blockHost,
+  unblockHost,
   deleteHost,
   fetchAllHosts,
   fetchSingleHost,
