@@ -32,6 +32,7 @@ app.use(
       'http://localhost:3000',
       'http://localhost:3001',
       'https://borderless-travel-admin-app.vercel.app',
+      'https://borderless-travels.netlify.app',
     ],
   })
 );
