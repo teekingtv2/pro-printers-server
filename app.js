@@ -24,16 +24,17 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const { connect } = require('./db');
 
+const origin = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'https://borderless-travel-admin-app.vercel.app',
+  'https://borderless-travels.netlify.app',
+];
+
 const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'https://borderless-travel-admin-app.vercel.app',
-      'https://borderless-travels.netlify.app',
-    ],
   })
 );
 app.use(cookieParser());
