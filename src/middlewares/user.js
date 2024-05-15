@@ -56,6 +56,10 @@ const validateLoginType = async (req, res, next) => {
   let user;
   let userIdentity;
 
+  if (!loginId) {
+    return sendLoginError(res, 'loginId is missing', 1);
+  }
+
   if (loginId.includes('@')) {
     userIdentity = loginId.toLowerCase();
     try {

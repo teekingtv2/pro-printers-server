@@ -86,6 +86,10 @@ const isAdminPasswordResetTokenValid = async (req, res, next) => {
 const validateAdminLoginType = async (req, res, next) => {
   const { idString, password } = req.body;
 
+  if (!idString) {
+    return sendError(res, 'idString is missing', 1);
+  }
+
   let existingAdmin;
   let adminIdentity;
 
