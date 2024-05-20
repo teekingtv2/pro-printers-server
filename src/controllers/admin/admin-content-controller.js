@@ -30,6 +30,25 @@ const addPost = async (req, res) => {
 };
 
 const editPost = async (req, res) => {
+  const post = await Content.findById(req.params.id);
+  if (
+    req.files['cover_image'] &&
+    (req.files['cover_image'] !== '' || req.files['cover_image'] !== null)
+  ) {
+    const rawImagesArray = req.files['cover_image'];
+    const namedImage = rawImagesArray.map((a) => a.filename);
+    const stringnifiedImages = JSON.stringify(namedImage);
+    const formmatedImages = stringnifiedImages.replace(/[^a-zA-Z0-9_.,]/g, '');
+    const cover_image = formmatedImages.replace(/[,]/g, ', ');
+    req.body.cover_image = cover_image;
+  } else if (req.files['cover_image'] && req.files['cover_image'] === '') {
+    req.body.cover_image = post.cover_image;
+  } else if (req.files['cover_image'] && req.files['cover_image'] === null) {
+    req.body.cover_image = post.cover_image;
+  } else {
+    req.body.cover_image = post.cover_image;
+  }
+
   try {
     const savedPost = await Content.findByIdAndUpdate(
       req.params.id,
@@ -53,8 +72,35 @@ const deletePost = async (req, res) => {
   }
 };
 
+const fetchAllPosts = async (req, res) => {
+  const { ...others } = req.query;
+  try {
+    const posts = await Content.find({
+      ...others,
+    }).limit(req.query.limit);
+    return sendSuccess(res, 'Succesfully fetched posts', posts);
+  } catch (error) {
+    return sendError(res, 'Unable to fetch the posts data');
+  }
+};
+
+const fetchSinglePost = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const post = await Content.findById(id);
+    if (!post) {
+      return sendError(res, 'post does not exist');
+    }
+    return sendSuccess(res, 'Succesfully fetched post', post);
+  } catch (error) {
+    return sendError(res, 'Unable to fetch the post profile data');
+  }
+};
+
 module.exports = {
   addPost,
   editPost,
   deletePost,
+  fetchAllPosts,
+  fetchSinglePost,
 };
