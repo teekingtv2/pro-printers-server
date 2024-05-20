@@ -1,6 +1,7 @@
 const { sendError, sendSuccess } = require('../../utils/helpers');
 const { log } = require('console');
 const Content = require('../../models/content/Content');
+const ContentCategory = require('../../models/content/ContentCategory');
 
 const addPost = async (req, res) => {
   const adminId = req.id;
@@ -11,6 +12,10 @@ const addPost = async (req, res) => {
   const cover_image = formmatedImages.replace(/[,]/g, ', ');
   const { title, content, author, category, post_status } = req.body;
   console.log('cover_image: ', cover_image);
+
+  if (post_status === 'scheduled') {
+    published_date = req.body.published_date;
+  }
 
   const newPost = new Content({
     title,
@@ -68,7 +73,7 @@ const deletePost = async (req, res) => {
     return sendSuccess(res, 'Successfully deleted the post');
   } catch (err) {
     console.log(err);
-    return sendError(res, 'Unable to delete the admin profile');
+    return sendError(res, 'Unable to delete the post');
   }
 };
 
@@ -84,7 +89,7 @@ const fetchAllPosts = async (req, res) => {
   }
 };
 
-const fetchSinglePost = async (req, res, next) => {
+const fetchSinglePost = async (req, res) => {
   const { id } = req.params;
   try {
     const post = await Content.findById(id);
@@ -97,10 +102,92 @@ const fetchSinglePost = async (req, res, next) => {
   }
 };
 
+const addPostCategory = async (req, res) => {
+  const adminId = req.id;
+  const { category, slug } = req.body;
+
+  const categoryExists = await ContentCategory.findOne({ category: category });
+  const slugExists = await ContentCategory.findOne({ slug: slug });
+
+  if (categoryExists) {
+    return sendError(res, 'Post category already exists');
+  } else if (slugExists) {
+    return sendError(res, 'Post category slug already exists');
+  }
+
+  const postCategory = new ContentCategory({
+    category,
+    slug,
+    published_by: adminId,
+  });
+  try {
+    await postCategory.save();
+    return sendSuccess(res, 'New post category has been successfully added', postCategory);
+  } catch (err) {
+    return sendError(res, 'Unable to save the post category to the databse', 500);
+  }
+};
+
+const editPostCategory = async (req, res) => {
+  try {
+    const savedPostCategory = await ContentCategory.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    return sendSuccess(res, 'Successfully updated the post category', savedPostCategory);
+  } catch (err) {
+    console.log(err);
+    return sendError(res, 'Unable to update the post category');
+  }
+};
+
+const deletePostCategory = async (req, res) => {
+  try {
+    await ContentCategory.findByIdAndDelete(req.params.id);
+    return sendSuccess(res, 'Successfully deleted the post category');
+  } catch (err) {
+    console.log(err);
+    return sendError(res, 'Unable to delete the post category');
+  }
+};
+
+const fetchAllPostCategories = async (req, res) => {
+  const { ...others } = req.query;
+  try {
+    const postCategories = await ContentCategory.find({
+      ...others,
+    }).limit(req.query.limit);
+    return sendSuccess(res, 'Succesfully fetched post categories', postCategories);
+  } catch (error) {
+    return sendError(res, 'Unable to fetch the post categories data');
+  }
+};
+
+const fetchSinglePostCategory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const postCategory = await ContentCategory.findById(id);
+    if (!postCategory) {
+      return sendError(res, 'post category does not exist');
+    }
+    return sendSuccess(res, 'Succesfully fetched post category', postCategory);
+  } catch (error) {
+    console.log(error);
+    return sendError(res, 'Unable to fetch the post category');
+  }
+};
+
 module.exports = {
   addPost,
   editPost,
   deletePost,
   fetchAllPosts,
   fetchSinglePost,
+
+  addPostCategory,
+  editPostCategory,
+  deletePostCategory,
+  fetchAllPostCategories,
+  fetchSinglePostCategory,
 };

@@ -7,6 +7,11 @@ const {
   deletePost,
   fetchAllPosts,
   fetchSinglePost,
+  addPostCategory,
+  editPostCategory,
+  deletePostCategory,
+  fetchAllPostCategories,
+  fetchSinglePostCategory,
 } = require('../../controllers/admin/admin-content-controller');
 const { postImageUpload } = require('../../utils/helpers/files');
 
@@ -17,5 +22,11 @@ router.put('/edit-post/:id', verifyAdminLoginToken, postImageUpload, editPost);
 router.delete('/delete-post/:id', verifyAdminLoginToken, deletePost);
 router.get('/all-posts', verifyAdminLoginToken, fetchAllPosts);
 router.get('/single-post/:id', verifyAdminLoginToken, fetchSinglePost);
+
+router.post('/add-post-category', verifyAdminLoginToken, addPostCategory);
+router.put('/edit-post-category/:id', verifyAdminLoginToken, editPostCategory);
+router.delete('/delete-post-category/:id', verifyAdminLoginToken, deletePostCategory);
+router.get('/all-post-categories', verifyAdminLoginToken, fetchAllPostCategories);
+router.get('/single-post-category/:id', verifyAdminLoginToken, fetchSinglePostCategory);
 
 module.exports = router;
