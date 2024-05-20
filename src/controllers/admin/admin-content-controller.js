@@ -5,6 +5,13 @@ const ContentCategory = require('../../models/content/ContentCategory');
 
 const addPost = async (req, res) => {
   const adminId = req.id;
+  if (
+    !req.files['cover_image'] ||
+    req.files['cover_image'] === null ||
+    req.files['cover_image'] == ''
+  ) {
+    return sendError(res, 'Please add a cover thumbnail image for the post');
+  }
   const rawImagesArray = req.files['cover_image'];
   const namedImage = rawImagesArray.map((a) => a.filename);
   const stringnifiedImages = JSON.stringify(namedImage);
@@ -12,6 +19,13 @@ const addPost = async (req, res) => {
   const cover_image = formmatedImages.replace(/[,]/g, ', ');
   const { title, content, author, category, post_status } = req.body;
   console.log('cover_image: ', cover_image);
+
+  if (
+    post_status === 'scheduled' &&
+    (!req.body.published_date || req.body.published_date === null || req.body.published_date == '')
+  ) {
+    return sendError(res, 'Kindly specify the scheduled date for post auto-publishing');
+  }
 
   if (post_status === 'scheduled') {
     published_date = req.body.published_date;

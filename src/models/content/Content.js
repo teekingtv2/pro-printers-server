@@ -31,6 +31,10 @@ const contentSchema = new Schema({
     type: String,
     required: true,
   },
+  views_count: {
+    type: Number,
+    default: 0,
+  },
   published_date: {
     type: Date,
     default: Date.now,
