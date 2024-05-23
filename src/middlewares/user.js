@@ -4,7 +4,7 @@ const User = require('../models/user/User');
 const ResetPasswordToken = require('../models/user/ResetPasswordToken');
 
 const validateNewUser = async (req, res, next) => {
-  const { first_name, last_name, email, password, referred_by } = req.body;
+  const { name, email, wallet, network, country, phone, password } = req.body;
   const refinedEmail = email.toLowerCase();
   let existingUser;
 
@@ -14,14 +14,16 @@ const validateNewUser = async (req, res, next) => {
     console.log(err);
   }
   if (existingUser) {
-    return sendError(res, 'Email already exists. Please login instead.');
+    return sendError(res, 'Email already exists. Please login instead.', 206);
   }
   req.body = {
-    first_name,
-    last_name,
+    name,
     email: refinedEmail,
+    wallet,
+    network,
+    country,
+    phone,
     password,
-    referred_by,
   };
   next();
 };
@@ -51,44 +53,24 @@ const isPasswordResetTokenValid = async (req, res, next) => {
 };
 
 const validateLoginType = async (req, res, next) => {
-  const { loginId, password } = req.body;
+  const { email, password } = req.body;
 
   let user;
   let userIdentity;
 
-  if (!loginId) {
-    return sendLoginError(res, 'loginId is missing', 1);
+  userIdentity = email.toLowerCase();
+
+  if (!email) {
+    return sendLoginError(res, 'email is missing', 1);
   }
 
-  if (loginId.includes('@')) {
-    userIdentity = loginId.toLowerCase();
-    try {
-      user = await User.findOne({ email: userIdentity });
-    } catch (err) {
-      return sendLoginError(res, err.message, 1, 500);
-    }
-    if (!user) {
-      return sendLoginError(res, 'Email not registered. Signup instead.', 1);
-    }
-  } else if (loginId.charAt(0) === '+') {
-    try {
-      user = await User.findOne({ phone: loginId });
-    } catch (err) {
-      return sendLoginError(res, err.message, 1, 500);
-    }
-    if (!user) {
-      return sendLoginError(res, 'Phone number not registered. Signup instead.', 0);
-    }
-  } else {
-    userIdentity = loginId.toLowerCase();
-    try {
-      user = await User.findOne({ username: userIdentity });
-    } catch (err) {
-      return sendLoginError(res, err.message, 1, 500);
-    }
-    if (!user) {
-      return sendLoginError(res, 'Username not registered. Signup instead.', 0);
-    }
+  try {
+    user = await User.findOne({ email: userIdentity });
+  } catch (err) {
+    return sendLoginError(res, err.message, 1, 500);
+  }
+  if (!user) {
+    return sendLoginError(res, 'Email not registered. Signup instead.', 1, 206);
   }
 
   req.body = {

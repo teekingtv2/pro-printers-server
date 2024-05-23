@@ -2,8 +2,6 @@ const bcrypt = require('bcryptjs');
 const { sendError, sendSuccess, badRequestError } = require('../../utils/helpers');
 const { log } = require('console');
 const User = require('../../models/user/User');
-const FlightBooking = require('../../models/FlightBooking');
-const ShortStayBooking = require('../../models/ShortStayBooking');
 
 const updateUserProfile = async (req, res) => {
   if (req.body.password) {
@@ -74,30 +72,6 @@ const unblockUser = async (req, res) => {
   }
 };
 
-const fetchUserFlightBookings = async (req, res) => {
-  console.log('flightBookings');
-  try {
-    const flightBookings = await FlightBooking.find({ owner: req.params.id });
-    if (flightBookings.length < 1) {
-      return sendSuccess(res, 'User has no Flight bookings yet', flightBookings);
-    }
-    return sendSuccess(res, null, flightBookings);
-  } catch (error) {
-    return sendError(res, "Unable to fetch the user's Flight Bookings");
-  }
-};
-const fetchUserShortStayBookings = async (req, res) => {
-  try {
-    const shortStayBookings = await ShortStayBooking.find({ owner: req.params.id });
-    if (shortStayBookings.length < 1) {
-      return sendSuccess(res, 'User has no Short Stay bookings yet', shortStayBookings);
-    }
-    return sendSuccess(res, null, shortStayBookings);
-  } catch (error) {
-    return sendError(res, "Unable to fetch the user's Short Stay bookings");
-  }
-};
-
 const deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
@@ -138,8 +112,6 @@ module.exports = {
   blockUser,
   unblockUser,
   deleteUser,
-  fetchUserFlightBookings,
-  fetchUserShortStayBookings,
   fetchAllUsers,
   fetchSingleUser,
 };

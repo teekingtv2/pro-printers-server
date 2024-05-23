@@ -1,44 +1,8 @@
-const VerificationToken = require('../../models/user/VerificationToken');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { sendError, createRandomBytes, generateOTP, sendSuccess } = require('../../utils/helpers');
-const { isValidObjectId } = require('mongoose');
+const { sendError, createRandomBytes, sendSuccess } = require('../../utils/helpers');
 const ResetPasswordToken = require('../../models/user/ResetPasswordToken');
 const Admin = require('../../models/admin/Admin');
-const AdminLoginToken = require('../../models/admin/AdminLoginToken');
-const { log } = require('console');
-
-const verifyEmail = async (req, res, next) => {
-  const { userId, otp } = req.body;
-
-  if (!userId || !otp.trim()) return sendError(res, 'Invalid request. Missing parameters');
-  if (!isValidObjectId(userId)) return sendError(res, 'Invalid user id');
-
-  const admin = await Admin.findById(userId, '-password');
-  console.log(admin);
-  if (!admin) return sendError(res, 'Sorry, user not found');
-
-  if (admin.email_verified) return sendError(res, "Account's email is already verified");
-
-  const vToken = await VerificationToken.findOne({ owner: admin._id });
-  if (!vToken) return sendError(res, 'Sorry, verification token not found on our database');
-  const token = vToken.token;
-
-  const isTokenMatched = bcrypt.compareSync(otp, token);
-  if (!isTokenMatched) {
-    return sendError(res, 'Please provide a valid token');
-  }
-
-  admin.email_verified = true;
-
-  await VerificationToken.findByIdAndDelete(vToken._id);
-  await admin.save();
-  console.log('User verified');
-  req.body = {
-    user: admin,
-  };
-  next();
-};
 
 // FORGOT PASSWORD
 const forgotPassword = async (req, res, next) => {
@@ -91,93 +55,18 @@ const resetPassword = async (req, res, next) => {
 };
 
 // LOGIN
-const loginAdminAttempt = async (req, res, next) => {
+const loginAdmin = async (req, res, next) => {
   const { existingAdmin, password } = req.body;
 
   const isPasswordCorrect = bcrypt.compareSync(password, existingAdmin.password);
   if (!isPasswordCorrect) {
     return sendError(res, 'Invalid email or password');
   }
-  if (!existingAdmin.email_verified) {
-    return res.status(206).json({
-      success: true,
-      message: 'Unverified email',
-      userId: existingAdmin._id,
-    });
-  }
-  console.log('Login phase 1 checked');
-  req.body = {
-    userId: existingAdmin._id,
-  };
-  next();
-};
 
-const generateAdminLoginToken = async (req, res, next) => {
-  const { userId } = req.body;
-  if (!userId) return sendError(res, 'Invalid request. Missing parameters');
-  let existingLoginToken;
-  const admin = await Admin.findById(userId, '-password');
-  if (!admin) {
-    return sendError(res, 'Admin account not found', 404);
-  }
-  try {
-    existingLoginToken = await AdminLoginToken.findOne({ owner: userId });
-  } catch (err) {
-    console.log(err);
-  }
-  if (existingLoginToken) {
-    await AdminLoginToken.findByIdAndDelete(existingLoginToken._id);
-  }
-  const otp = generateOTP();
-  const hashedOtp = bcrypt.hashSync(otp);
-  const adminLoginToken = new AdminLoginToken({
-    owner: userId,
-    token: hashedOtp,
-  });
-  try {
-    await adminLoginToken.save();
-    console.log('OTP saved', otp);
-    req.body = {
-      user: admin,
-      otp,
-    };
-    next();
-  } catch (err) {
-    console.log(err);
-    return sendError(res, 'Unable to send OTP');
-  }
-};
-
-const verifyLoginAttempt = async (req, res, next) => {
-  const { userId, otp } = req.body;
-
-  if (!userId || !otp) return sendError(res, 'Invalid request. Missing parameters');
-  if (!isValidObjectId(userId)) return sendError(res, 'Invalid admin id');
-
-  const admin = await Admin.findById(userId, '-password');
-  if (!admin) return sendError(res, 'Sorry, admin not found');
-
-  const vToken = await AdminLoginToken.findOne({ owner: admin._id });
-  if (!vToken) return sendError(res, 'Sorry, verification token not found');
-  const token = vToken.token;
-
-  const isTokenMatched = bcrypt.compareSync(otp, token);
-  if (!isTokenMatched) {
-    return sendError(res, 'Please provide a valid token');
-  }
-
-  await AdminLoginToken.findByIdAndDelete(vToken._id);
-  console.log('admin login verified');
-  req.body = { admin };
-  next();
-};
-
-const logAdminIn = async (req, res, next) => {
-  const { admin } = req.body;
-  const token = jwt.sign({ id: admin._id }, process.env.JWT_ADMIN_SECRET_KEY, {
+  const token = jwt.sign({ id: existingAdmin._id }, process.env.JWT_ADMIN_SECRET_KEY, {
     expiresIn: '5d',
   });
-  res.cookie(String(admin._id), token, {
+  res.cookie(String(existingAdmin._id), token, {
     path: '/',
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5),
     httpOnly: true,
@@ -185,9 +74,10 @@ const logAdminIn = async (req, res, next) => {
     secure: true,
     // sameSite: 'lax',
   });
-
-  req.body = { user: admin, token };
-  next();
+  return sendSuccess(res, 'successfully logged in', {
+    name: existingAdmin.name,
+    id: existingAdmin._id,
+  });
 };
 
 const isAdminLogin = async (req, res) => {
@@ -253,15 +143,10 @@ const logoutAdmin = (req, res, next) => {
 };
 
 module.exports = {
-  verifyEmail,
   forgotPassword,
   resetPassword,
 
-  loginAdminAttempt,
-  generateAdminLoginToken,
-
-  verifyLoginAttempt,
-  logAdminIn,
+  loginAdmin,
 
   isAdminLogin,
   verifyAdminLoginToken,

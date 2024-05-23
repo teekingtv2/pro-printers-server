@@ -9,13 +9,12 @@ const {
   logout,
   isUserLogin,
   isEmailRegistered,
-} = require('../../controllers/website/user-auth-controller');
+} = require('../../controllers/user/user-auth-controller');
 const {
   verificationEmail,
   emailVerifiedEmail,
   resetPasswordEmail,
   passwordUpdatedEmail,
-  loginSuccessfulEmail,
 } = require('../../services/emailServices');
 const { validateUserSignupParams, validate } = require('../../middlewares/validator');
 const {
@@ -39,7 +38,7 @@ router.post('/resend-verification-otp', generateEmailVerificationToken, verifica
 router.post('/verify-email', verifyEmail, emailVerifiedEmail);
 router.post('/forgot-password', forgotPassword, resetPasswordEmail);
 router.post('/reset-password', isPasswordResetTokenValid, resetPassword, passwordUpdatedEmail);
-router.post('/login', validateLoginType, login, loginSuccessfulEmail);
+router.post('/login', validateLoginType, login);
 router.get('/check-session', isUserLogin);
 router.post('/logout', logout);
 router.post('/check-email', isEmailRegistered);

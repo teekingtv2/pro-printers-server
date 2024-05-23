@@ -156,7 +156,7 @@ const emailHead = () => {
 						<table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
 							<tr>
 								<td class="pad" style="width:100%;padding-right:0px;padding-left:0px;">
-									<div class="alignment" align="center" style="line-height:10px"><img src="https://demo.stripocdn.email/content/guids/7f6e76c2-c175-449d-af5d-b893233641f9/images/logo.png" style="height: auto; display: block; border: 0; max-width: 130px; width: 100%;" width="130"></div>
+									<div class="alignment" align="center" style="line-height:10px"><img src="https://demo.stripocdn.email/content/guids/9e518712-bf9f-457a-9ab3-0c4363bb594a/images/logo.png" style="height: auto; display: block; border: 0; max-width: 130px; width: 100%;" width="130"></div>
 								</td>
 							</tr>
 						</table>

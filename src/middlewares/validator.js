@@ -54,111 +54,34 @@ exports.validateSubscriptionParams = [
   check('country').trim().not().isEmpty().withMessage('Where are you from?'),
 ];
 
-// Flight
-exports.validateFlightBooking = [
-  check('contact_details.c_first_name')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Contact First Name is missing!')
-    .isLength({ min: 3, max: 20 })
-    .withMessage('First Name must be between 3 and 20 characters'),
-  check('contact_details.c_last_name')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Contact Last Name is missing!')
-    .isLength({ min: 3, max: 20 })
-    .withMessage('Last Name must be between 3 and 20 characters'),
-  check('contact_details.c_email').isEmail().withMessage('Contact Email is invalid'),
-  check('contact_details.c_phone_number')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Contact Phone Number is missing!'),
-  check('contact_details.c_relationship_to_p')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage("Contact's relationship to passenger not specified"),
-  check('passenger_details[0].passenger_type')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Passenger type is not specified!'),
-  check('passenger_details[0].first_name')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Passenger First Name is missing!')
-    .isLength({ min: 3, max: 20 })
-    .withMessage('First Name must be between 3 and 20 characters'),
-  check('passenger_details[0].last_name')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Passenger Last Name is missing!')
-    .isLength({ min: 3, max: 20 })
-    .withMessage('Last Name must be between 3 and 20 characters'),
-  check('passenger_details[0].dob')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Passenger Date of Birth is missing!'),
-  check('passenger_details[0].gender')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Passenger Gender is missing!'),
-  check('passenger_details[0].title')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Passenger Title is missing!'),
-  check('passenger_details[0].email').isEmail().withMessage('Passenger Email is invalid'),
-  check('passenger_details[0].phone_number')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Passenger Phone Number is missing!'),
-];
-
 // User
 exports.validateUserSignupParams = [
-  check('first_name')
+  check('name')
     .trim()
     .not()
     .isEmpty()
-    .withMessage('First Name is missing!')
-    .isLength({ min: 3, max: 20 })
-    .withMessage('First Name must be between 3 and 25 characters'),
-  check('last_name')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Last Name is missing!')
-    .isLength({ min: 3, max: 20 })
-    .withMessage('Last Name must be between 3 and 25 characters'),
+    .withMessage('Your full name is missing!')
+    .isLength({ min: 6, max: 40 })
+    .withMessage('Name must be between 6 and 40 characters'),
   check('email').isEmail().withMessage('Email is invalid'),
+  check('wallet').trim().not().isEmpty().withMessage('Wallet address is missing!'),
+  check('network').trim().not().isEmpty().withMessage('Chain network is missing!'),
+  check('country').trim().not().isEmpty().withMessage('Where are you located?'),
+  check('phone').trim().not().isEmpty().withMessage('Phone number is missing!'),
   check('password').trim().not().isEmpty().withMessage('Password cannot be empty'),
 ];
 exports.validateUpdateProfileUserParams = [
-  check('first_name')
+  check('name')
     .trim()
     .not()
     .isEmpty()
-    .withMessage('First Name is missing!')
-    .isLength({ min: 3, max: 20 })
-    .withMessage('First Name must be between 3 and 20 characters'),
-  check('last_name')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Last Name is missing!')
-    .isLength({ min: 3, max: 20 })
-    .withMessage('Last Name must be between 3 and 20 characters'),
-  check('username').trim().not().isEmpty().withMessage('Username is missing!'),
-  check('phone').trim().not().isEmpty().withMessage('Phone Number is missing!'),
+    .withMessage('Your full name is missing!')
+    .isLength({ min: 6, max: 40 })
+    .withMessage('Name must be between 6 and 40 characters'),
+  check('wallet').trim().not().isEmpty().withMessage('Wallet address is missing!'),
+  check('network').trim().not().isEmpty().withMessage('Chain network is missing!'),
+  check('country').trim().not().isEmpty().withMessage('Where are you located?'),
+  check('phone').trim().not().isEmpty().withMessage('Phone number is missing!'),
 ];
 exports.validateUpdateEmailAlertUserParams = [
   check('priceAlert').trim().not().isEmpty().withMessage('Price Alert value is missing!'),

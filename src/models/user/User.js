@@ -3,11 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  first_name: {
-    type: String,
-    required: true,
-  },
-  last_name: {
+  name: {
     type: String,
     required: true,
   },
@@ -15,58 +11,43 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  username: {
+  wallet: {
     type: String,
   },
-  phone: {
-    type: String,
-  },
-  address: {
-    type: String,
-  },
-  city: {
-    type: String,
-  },
-  state: {
-    type: String,
-  },
-  zip: {
+  network: {
     type: String,
   },
   country: {
     type: String,
   },
-  referral_code: {
+  phone: {
     type: String,
   },
-  referred_by: {
-    type: String,
+  deposite_balance: {
+    type: Number,
+    default: 0,
   },
-  status: {
-    type: String,
-    default: 'Pending',
+  total_balance: {
+    type: Number,
+    default: 0,
   },
-  priceAlert: {
-    type: Boolean,
-    default: true,
-  },
-  travelAlert: {
-    type: Boolean,
-    default: true,
+  profit_balance: {
+    type: Number,
+    default: 0,
   },
   password: {
     type: String,
     required: true,
     minlength: 6,
   },
+  status: {
+    type: String,
+    default: 'Pending',
+  },
   email_verified: {
     type: Boolean,
     default: false,
     required: true,
-  },
-  bookings: {
-    type: Number,
-    default: 0,
   },
   createdAt: {
     type: Date,

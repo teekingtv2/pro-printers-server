@@ -12,37 +12,25 @@ const {
 } = require('../../utils/helpers');
 const { isValidObjectId } = require('mongoose');
 const ResetPasswordToken = require('../../models/user/ResetPasswordToken');
-const UserReferral = require('../../models/user/UserReferral');
 
 const signup = async (req, res, next) => {
-  const { first_name, last_name, email, password, referred_by } = req.body;
+  const { name, email, wallet, network, country, phone, password } = req.body;
 
   const hashedPassword = bcrypt.hashSync(password);
   const user = new User({
-    first_name,
-    last_name,
+    name,
     email,
+    wallet,
+    network,
+    country,
+    phone,
     password: hashedPassword,
-    referred_by,
   });
 
   try {
     await user.save();
     console.log('User successfully signed up');
-    if (referred_by !== '') {
-      const referrer = await User.findOne({ referral_code: referred_by });
-      if (referrer) {
-        const referrerData = await UserReferral.findOne({ owner: referrer._id });
-        const referrals = referrerData.referrals;
-        referrerData.referrals = referrals + 1;
-        try {
-          await referrerData.save();
-        } catch (error) {
-          console.log(error);
-          return sendError(res, 'Unable to setup referral profile');
-        }
-      }
-    }
+
     req.body = {
       userId: user._id,
     };
@@ -153,7 +141,7 @@ const forgotPassword = async (req, res, next) => {
   }
 
   const checkToken = await ResetPasswordToken.findOne({ owner: user._id });
-  if (checkToken) return sendError(res, 'You can only request a new token after an hour');
+  if (checkToken) return sendError(res, 'You can only request a new token after 6 minutes');
 
   // Generate token
   const token = await createRandomBytes();
@@ -195,7 +183,7 @@ const login = async (req, res, next) => {
     return sendLoginError(res, 'Invalid login ID or password', 0);
   }
   if (!user.email_verified) {
-    return res.status(401).json({
+    return res.status(200).json({
       success: true,
       loginStatus: 1,
       message: 'Unverified email',
@@ -215,13 +203,15 @@ const login = async (req, res, next) => {
     secure: true,
     // sameSite: 'lax',
   });
-  req.body = { user, token };
-  next();
+  return sendSuccess(res, 'successfully logged in', {
+    name: user.name,
+    id: user._id,
+    email_verified: user.email_verified,
+  });
 };
 
 const isUserLogin = async (req, res) => {
   const cookies = req.headers.cookie;
-  console.log('Session check cookie: ', cookies);
   if (cookies) {
     return res.status(200).json({ success: true, message: 'You are a logged in user' });
   } else if (!cookies) {
@@ -232,15 +222,15 @@ const isUserLogin = async (req, res) => {
 const verifyUserLoginToken = (req, res, next) => {
   const cookies = req.headers.cookie;
   if (!cookies) {
-    return sendError(res, 'No cookie found', 404);
+    return sendError(res, 'No cookie found. Please login instead', 400);
   }
   const token = cookies.split('=')[1];
   if (!token) {
-    return sendError(res, 'No token found', 404);
+    return sendError(res, 'No token found. Please login instead', 400);
   }
   jwt.verify(String(token), process.env.JWT_USER_SECRET_KEY, (err, user) => {
     if (err) {
-      return sendError(res, 'Invalid Token', 404);
+      return sendError(res, 'Invalid Token', 400);
     }
     req.id = user.id;
   });
