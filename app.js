@@ -36,7 +36,7 @@ app.use('/api/v1/admin-app/user-management', userManagementRouter);
 
 app.get('/', (req, res) => {
   res.send(
-    'Hello, welcome to Borderless Travels app. Server is running with latest update in May 2024\n - Content management completed'
+    'Hello, welcome to Hedge Funds app. Server is running with latest update in May 2024\n - '
   );
 });
 
