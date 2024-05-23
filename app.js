@@ -21,6 +21,7 @@ app.use(
       'http://localhost:3000',
       'http://localhost:5173',
       'https://hedge-funds-user-site.vercel.app',
+      'https://hedge-funds-user-site-nine.vercel.app',
       'https://hedge-funds-admin-site.vercel.app',
     ],
   })
