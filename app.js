@@ -20,8 +20,8 @@ app.use(
     origin: [
       'http://localhost:3000',
       'http://localhost:5173',
-      'https://hedge-funds-user-site.vercel.app/',
-      'https://hedge-funds-admin-site.vercel.app/',
+      'https://hedge-funds-user-site.vercel.app',
+      'https://hedge-funds-admin-site.vercel.app',
     ],
   })
 );
