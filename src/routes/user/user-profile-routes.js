@@ -3,6 +3,7 @@ const {
   getUser,
   updateUserProfile,
   updateUserPassword,
+  fetchuserTransactions,
 } = require('../../controllers/user/user-profile-controller');
 const { verifyUserLoginToken } = require('../../controllers/user/user-auth-controller');
 const { passwordUpdatedEmail } = require('../../services/emailServices');
@@ -16,6 +17,7 @@ const router = express.Router();
 
 // Profile
 router.get('/user', verifyUserLoginToken, getUser);
+router.get('/transactions', verifyUserLoginToken, fetchuserTransactions);
 router.put(
   '/update-profile',
   verifyUserLoginToken,

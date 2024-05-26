@@ -1,23 +1,14 @@
-const VerificationToken = require('../../models/user/VerificationToken');
 const bcrypt = require('bcryptjs');
-const { sendError, generateOTP, sendSuccess, badRequestError } = require('../../utils/helpers');
+const { sendError, sendSuccess } = require('../../utils/helpers');
 const Admin = require('../../models/admin/Admin');
-const { log } = require('console');
 
-const addAdmin = async (req, res, next) => {
-  const { first_name, last_name, email, phone, role, username } = req.body;
-
-  const password = process.env.ADMIN_PASSWORD;
-  log('password:', password);
+const addAdmin = async (req, res) => {
+  const { email, username, password } = req.body;
 
   const hashedPassword = bcrypt.hashSync(password);
   const admin = new Admin({
-    first_name,
-    last_name,
-    email,
-    phone,
-    role,
     username,
+    email,
     password: hashedPassword,
   });
 

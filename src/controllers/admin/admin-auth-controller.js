@@ -3,6 +3,37 @@ const jwt = require('jsonwebtoken');
 const { sendError, createRandomBytes, sendSuccess } = require('../../utils/helpers');
 const ResetPasswordToken = require('../../models/user/ResetPasswordToken');
 const Admin = require('../../models/admin/Admin');
+const Wallet = require('../../models/admin/Wallet');
+
+const getWalletAddress = async (req, res) => {
+  try {
+    const wallet = await Wallet.find().limit(1);
+    if (!wallet) {
+      return sendError(res, 'Wallet data not found');
+    }
+    return sendSuccess(res, 'Successfully fetched', wallet);
+  } catch (err) {
+    return sendError(res, err.message);
+  }
+};
+
+const updateWalletAddress = async (req, res) => {
+  try {
+    const wallet = await Wallet.findById(req.params.id);
+    if (!wallet) {
+      return sendError(res, 'You do not have a valid profile');
+    }
+    const currentWallet = await Wallet.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    return sendSuccess(res, 'Wallet address has been successfully updated', currentWallet);
+  } catch (error) {
+    console.log(error);
+    return sendError(res, 'Unable to update Wallet address');
+  }
+};
 
 // FORGOT PASSWORD
 const forgotPassword = async (req, res, next) => {
@@ -54,6 +85,26 @@ const resetPassword = async (req, res, next) => {
   next();
 };
 
+const adminUpdateProfile = async (req, res) => {
+  const adminId = req.id;
+  try {
+    const admin = await Admin.findById(adminId);
+    if (!admin) {
+      return sendError(res, 'You do not have a valid profile');
+    }
+    if (req.body.password) {
+      req.body.password = bcrypt.hashSync(req.body.password);
+    } else {
+      req.body.password = admin.password;
+    }
+    const currentAdmin = await Admin.findByIdAndUpdate(adminId, { $set: req.body }, { new: true });
+    return sendSuccess(res, 'Your profile data has been successfully updated', currentAdmin);
+  } catch (error) {
+    console.log(err);
+    return sendError(res, 'Unable to update your profile data');
+  }
+};
+
 // LOGIN
 const loginAdmin = async (req, res, next) => {
   const { existingAdmin, password } = req.body;
@@ -92,15 +143,15 @@ const isAdminLogin = async (req, res) => {
 const verifyAdminLoginToken = (req, res, next) => {
   const cookies = req.headers.cookie;
   if (!cookies) {
-    return sendError(res, 'You are not authenticated or authorised to perform this operation');
+    return sendError(res, 'You are not authenticated or authorised to perform this operation', 400);
   }
   const token = cookies.split('=')[1];
   if (!token) {
-    return sendError(res, 'You are not authenticated or authorised to perform this operation');
+    return sendError(res, 'You are not authenticated or authorised to perform this operation', 400);
   }
   jwt.verify(String(token), process.env.JWT_ADMIN_SECRET_KEY, (err, admin) => {
     if (err) {
-      return sendError(res, 'Invalid authorisation token', 404);
+      return sendError(res, 'Invalid authorisation token', 400);
     }
     req.id = admin.id;
   });
@@ -112,13 +163,13 @@ const getAdmin = async (req, res) => {
   let admin;
   try {
     admin = await Admin.findById(adminId, '-password');
+    if (!admin) {
+      return sendError(res, 'Admin data not found');
+    }
+    return sendSuccess(res, 'successfully fetched admin data', admin);
   } catch (err) {
     return sendError(res, err.message);
   }
-  if (!admin) {
-    return sendError(res, 'Admin data not found');
-  }
-  return sendSuccess(res, 'successfully fetched admin data', admin);
 };
 
 const logoutAdmin = (req, res, next) => {
@@ -143,6 +194,9 @@ const logoutAdmin = (req, res, next) => {
 };
 
 module.exports = {
+  getWalletAddress,
+  updateWalletAddress,
+
   forgotPassword,
   resetPassword,
 
@@ -152,6 +206,7 @@ module.exports = {
   verifyAdminLoginToken,
 
   getAdmin,
+  adminUpdateProfile,
 
   logoutAdmin,
 };

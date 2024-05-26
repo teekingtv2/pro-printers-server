@@ -5,7 +5,7 @@ const { sendError } = require('../utils/helpers');
 const { log } = require('console');
 
 const validateNewAdmin = async (req, res, next) => {
-  const { first_name, last_name, email, phone, role, username, password } = req.body;
+  const { email, username, password } = req.body;
 
   const refinedUsername = username.toLowerCase();
   const refinedEmail = email.toLowerCase();
@@ -24,7 +24,7 @@ const validateNewAdmin = async (req, res, next) => {
   if (existingAdmin) {
     return sendError(
       res,
-      `Email already used fpor another admin with name - ${existingAdmin.first_name} ${existingAdmin.last_name}`
+      `Email already used for another admin with name - ${existingAdmin.username}`
     );
   }
 
@@ -47,11 +47,7 @@ const validateNewAdmin = async (req, res, next) => {
   }
 
   req.body = {
-    first_name,
-    last_name,
     email: refinedEmail,
-    phone,
-    role,
     username: refinedUsername,
     password,
   };
@@ -84,17 +80,16 @@ const isAdminPasswordResetTokenValid = async (req, res, next) => {
 };
 
 const validateAdminLoginType = async (req, res, next) => {
-  const { idString, password } = req.body;
-
-  if (!idString) {
-    return sendError(res, 'idString is missing', 1);
+  const { email, password } = req.body;
+  if (!email) {
+    return sendError(res, 'email is missing', 1);
   }
 
   let existingAdmin;
   let adminIdentity;
 
-  if (idString.includes('@')) {
-    adminIdentity = idString.toLowerCase();
+  if (email.includes('@')) {
+    adminIdentity = email.toLowerCase();
     try {
       existingAdmin = await Admin.findOne({ email: adminIdentity });
     } catch (err) {
@@ -102,25 +97,6 @@ const validateAdminLoginType = async (req, res, next) => {
     }
     if (!existingAdmin) {
       return sendError(res, 'Email not registered. Access denied.');
-    }
-  } else if (idString.charAt(0) === '+' || idString.charAt(0) === 0) {
-    try {
-      existingAdmin = await Admin.findOne({ phone: idString });
-    } catch (err) {
-      return sendError(res, err.message, 500);
-    }
-    if (!existingAdmin) {
-      return sendError(res, 'Phone number not registered. Access denied.');
-    }
-  } else {
-    adminIdentity = idString.toLowerCase();
-    try {
-      existingAdmin = await Admin.findOne({ username: adminIdentity });
-    } catch (err) {
-      return sendError(res, err.message, 500);
-    }
-    if (!existingAdmin) {
-      return sendError(res, 'Username not registered. Access denied.');
     }
   }
 

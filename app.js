@@ -20,6 +20,7 @@ app.use(
     origin: [
       'http://localhost:3000',
       'http://localhost:5173',
+      'http://localhost:5174',
       'https://hedge-funds-user-site.vercel.app',
       'https://hedge-funds-user-app.vercel.app',
       'https://hedge-funds-admin-site.vercel.app',
@@ -31,9 +32,9 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use('/api/v1/user-auth', userAuthRouter);
 app.use('/api/v1/user-profile', userProfileRouter);
-app.use('/api/v1/admin-app/admin-auth', adminAuthRouter);
-app.use('/api/v1/admin-app/admin-management', adminManagementRouter);
-app.use('/api/v1/admin-app/user-management', userManagementRouter);
+app.use('/api/v1/admin-auth', adminAuthRouter);
+app.use('/api/v1/admin-management', adminManagementRouter);
+app.use('/api/v1/user-management', userManagementRouter);
 
 app.get('/', (req, res) => {
   res.send(

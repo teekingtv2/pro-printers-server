@@ -2,6 +2,7 @@ const User = require('../../models/user/User');
 const { sendError, sendSuccess, badRequestError } = require('../../utils/helpers');
 const UserReferral = require('../../models/user/UserReferral');
 const bcrypt = require('bcryptjs');
+const Transaction = require('../../models/user/Transaction');
 
 const getUser = async (req, res) => {
   const userId = req.id;
@@ -15,6 +16,21 @@ const getUser = async (req, res) => {
     return sendError(res, 'User not found');
   }
   return sendSuccess(res, null, user);
+};
+
+const fetchuserTransactions = async (req, res) => {
+  const userId = req.id;
+  try {
+    const trans = await Transaction.find().limit({ owner: userId });
+    const transactions = trans.filter((trans) => trans.owner === userId);
+    if (!transactions) {
+      return sendError(res, 'Transaction record does not exist');
+    }
+    console.log('transactions', transactions);
+    return res.status(200).json({ success: true, data: transactions });
+  } catch (error) {
+    return sendError(res, `Unable to fetch the transaction record. Error - ${error}`);
+  }
 };
 
 const updateUserProfile = async (req, res) => {
@@ -58,6 +74,7 @@ const updateUserPassword = async (req, res, next) => {
 
 module.exports = {
   getUser,
+  fetchuserTransactions,
   updateUserProfile,
   updateUserPassword,
 };
