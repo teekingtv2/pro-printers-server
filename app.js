@@ -23,7 +23,7 @@ app.use(
       'http://localhost:5174',
       'https://hedge-funds-user-site.vercel.app',
       'https://hedge-funds-user-app.vercel.app',
-      'https://hedge-funds-admin-site.vercel.app',
+      'https://hedge-funds-admin.vercel.app',
     ],
   })
 );
@@ -38,7 +38,7 @@ app.use('/api/v1/user-management', userManagementRouter);
 
 app.get('/', (req, res) => {
   res.send(
-    'Hello, welcome to Hedge Funds app. Server is running with latest update in May 2024\n - '
+    'Hello, welcome to Hedge Funds app. Server is running with latest update in May 2024\n - Admin app added'
   );
 });
 
