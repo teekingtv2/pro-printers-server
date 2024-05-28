@@ -68,6 +68,13 @@ exports.validateUpdatePasswordParams = [
     .withMessage('Password must be between 8 and 20 characters long'),
 ];
 
+exports.validateAddAdPost = [
+  check('whatsapp').trim().not().isEmpty().withMessage('Whatsapp channel link is missing!'),
+  check('telegram').trim().not().isEmpty().withMessage('Telegram channel link is missing!'),
+  check('title').trim().not().isEmpty().withMessage('Ad title is missing!'),
+  check('content').trim().not().isEmpty().withMessage('Ad content is missing!'),
+];
+
 exports.validate = (req, res, next) => {
   const error = validationResult(req).array();
   if (!error.length) return next();

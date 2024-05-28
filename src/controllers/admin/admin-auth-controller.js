@@ -154,8 +154,8 @@ const verifyAdminLoginToken = (req, res, next) => {
       return sendError(res, 'Invalid authorisation token', 400);
     }
     req.id = admin.id;
+    next();
   });
-  next();
 };
 
 const getAdmin = async (req, res) => {

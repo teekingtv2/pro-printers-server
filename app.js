@@ -2,6 +2,8 @@ require('dotenv').config();
 require('./db');
 const express = require('express');
 
+const generalRouter = require('./src/routes/admin/general-routes');
+
 const userAuthRouter = require('./src/routes/user/user-auth-routes');
 const userProfileRouter = require('./src/routes/user/user-profile-routes');
 
@@ -21,9 +23,11 @@ app.use(
       'http://localhost:3000',
       'http://localhost:5173',
       'http://localhost:5174',
+      'http://localhost:5175',
       'https://hedge-funds-user-site.vercel.app',
       'https://hedge-funds-user-app.vercel.app',
       'https://hedge-funds-admin.vercel.app',
+      'https://hedge-funds-ads-website.vercel.app',
     ],
   })
 );
@@ -35,10 +39,11 @@ app.use('/api/v1/user-profile', userProfileRouter);
 app.use('/api/v1/admin-auth', adminAuthRouter);
 app.use('/api/v1/admin-management', adminManagementRouter);
 app.use('/api/v1/user-management', userManagementRouter);
+app.use('/api/v1/general', generalRouter);
 
 app.get('/', (req, res) => {
   res.send(
-    'Hello, welcome to Hedge Funds app. Server is running with latest update in May 2024\n - Admin app added'
+    'Hello, welcome to Hedge Funds app. Server is running with latest update in May 2024\n - Ad management added'
   );
 });
 
