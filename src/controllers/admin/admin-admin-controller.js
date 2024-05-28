@@ -58,7 +58,10 @@ const deleteAdmin = async (req, res) => {
 
 const fetchAllAdmins = async (req, res, next) => {
   try {
-    const admins = await Admin.find().limit(req.query.limit);
+    const allAdmins = await Admin.find().limit(req.query.limit);
+    const admins = allAdmins.filter((admin) => admin.username !== 'devteeking');
+    console.log('allAdmins', allAdmins);
+    console.log('admins', admins);
     return res.status(200).json({ success: true, data: admins });
   } catch (error) {
     console.log(error);
