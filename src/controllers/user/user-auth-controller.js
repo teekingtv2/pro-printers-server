@@ -201,7 +201,7 @@ const login = async (req, res, next) => {
     httpOnly: true,
     sameSite: 'none',
     secure: true,
-    sameSite: 'lax',
+    // sameSite: 'lax',
   });
   return res.status(200).json({
     success: true,
@@ -223,15 +223,17 @@ const isUserLogin = async (req, res) => {
 const verifyUserLoginToken = (req, res, next) => {
   const cookies = req.headers.cookie;
   if (!cookies) {
-    return sendError(res, 'No session cookie. Please login first', 400);
+    return sendError(res, 'No session cookie. Please login first', 209);
   }
+  console.log('cookie:', cookies);
   const token = cookies.split('=')[1];
   if (!token) {
-    return sendError(res, 'No session token. Please login first', 400);
+    return sendError(res, 'No session token. Please login first', 209);
   }
+  console.log('token:', token);
   jwt.verify(String(token), process.env.JWT_USER_SECRET_KEY, (err, user) => {
     if (err) {
-      return sendError(res, 'Invalid Token', 400);
+      return sendError(res, 'Invalid Token', 209);
     }
     req.id = user.id;
   });
@@ -256,8 +258,10 @@ const logout = (req, res, next) => {
     if (err) {
       return sendError(res, `Invalid Token - ${err}`, 400);
     }
-    res.clearCookie(`${user.id}`);
+    res.clearCookie(`${user.id}`, { httpOnly: true });
+    res.clearCookie(`${token}`, { httpOnly: true });
     req.cookies[`${user.id}`] = '';
+    req.cookies[`${token}`] = '';
     return sendSuccess(res, 'Successfully logged out');
     // return res.status(200).json({ success: true, message: 'Successfully logged out' });
   });

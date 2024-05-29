@@ -145,15 +145,17 @@ const isAdminLogin = async (req, res) => {
 const verifyAdminLoginToken = (req, res, next) => {
   const cookies = req.headers.cookie;
   if (!cookies) {
-    return sendError(res, 'You are not authenticated or authorised to perform this operation', 400);
+    return sendError(res, 'No session cookie. You are not authenticated for this operation', 209);
   }
+  console.log('cookie:', cookies);
   const token = cookies.split('=')[1];
   if (!token) {
-    return sendError(res, 'You are not authenticated or authorised to perform this operation', 400);
+    return sendError(res, 'No session token. You are not authenticated for this operation', 209);
   }
+  console.log('token:', token);
   jwt.verify(String(token), process.env.JWT_ADMIN_SECRET_KEY, (err, admin) => {
     if (err) {
-      return sendError(res, 'Invalid authorisation token', 400);
+      return sendError(res, 'Invalid authorisation token', 209);
     }
     req.id = admin.id;
   });
@@ -189,8 +191,10 @@ const logoutAdmin = (req, res, next) => {
       return sendError(res, 'Invalid Token', 400);
       // return res.status(400).json({ message: "Invalid Token" })
     }
-    res.clearCookie(`${admin.id}`);
+    res.clearCookie(`${admin.id}`, { httpOnly: true });
+    res.clearCookie(`${token}`, { httpOnly: true });
     req.cookies[`${admin.id}`] = '';
+    req.cookies[`${token}`] = '';
     return res.status(200).json({ success: true, message: 'Successfully logged out' });
   });
 };
