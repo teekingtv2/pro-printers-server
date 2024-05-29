@@ -258,13 +258,9 @@ const logout = (req, res, next) => {
     if (err) {
       return sendError(res, `Invalid Token - ${err}`, 400);
     }
-    res.clearCookie(`${user.id}`, { httpOnly: true });
-    res.clearCookie(`${token}`, { httpOnly: true });
+    res.clearCookie(`${user.id}`);
     req.cookies[`${user.id}`] = '';
-    req.cookies[`${token}`] = '';
-    req.headers.cookies = '';
     return sendSuccess(res, 'Successfully logged out');
-    // return res.status(200).json({ success: true, message: 'Successfully logged out' });
   });
 };
 

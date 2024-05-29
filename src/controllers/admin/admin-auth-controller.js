@@ -191,10 +191,8 @@ const logoutAdmin = (req, res, next) => {
       return sendError(res, 'Invalid Token', 400);
       // return res.status(400).json({ message: "Invalid Token" })
     }
-    res.clearCookie(`${admin.id}`, { httpOnly: true });
-    res.clearCookie(`${token}`, { httpOnly: true });
+    res.clearCookie(`${admin.id}`);
     req.cookies[`${admin.id}`] = '';
-    req.cookies[`${token}`] = '';
     return res.status(200).json({ success: true, message: 'Successfully logged out' });
   });
 };
