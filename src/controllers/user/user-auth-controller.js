@@ -199,14 +199,15 @@ const login = async (req, res, next) => {
     path: '/',
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
     httpOnly: true,
-    sameSite: 'none',
-    secure: true,
-    // sameSite: 'lax',
+    sameSite: 'lax',
+    // sameSite: 'none',
+    // secure: true,
   });
   return sendSuccess(res, 'successfully logged in', {
     name: user.name,
     id: user._id,
     email_verified: user.email_verified,
+    token,
   });
 };
 
@@ -222,11 +223,11 @@ const isUserLogin = async (req, res) => {
 const verifyUserLoginToken = (req, res, next) => {
   const cookies = req.headers.cookie;
   if (!cookies) {
-    return sendError(res, 'No session. Please login first', 400);
+    return sendError(res, 'No session cookie. Please login first', 400);
   }
   const token = cookies.split('=')[1];
   if (!token) {
-    return sendError(res, 'No session. Please login first', 400);
+    return sendError(res, 'No session token. Please login first', 400);
   }
   jwt.verify(String(token), process.env.JWT_USER_SECRET_KEY, (err, user) => {
     if (err) {

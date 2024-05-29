@@ -121,13 +121,14 @@ const loginAdmin = async (req, res, next) => {
     path: '/',
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5),
     httpOnly: true,
-    sameSite: 'none',
-    secure: true,
-    // sameSite: 'lax',
+    sameSite: 'lax',
+    // sameSite: 'none',
+    // secure: true,
   });
   return sendSuccess(res, 'successfully logged in', {
     name: existingAdmin.name,
     id: existingAdmin._id,
+    token,
   });
 };
 
