@@ -199,14 +199,14 @@ const login = async (req, res, next) => {
     path: '/',
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
     httpOnly: true,
+    sameSite: 'none',
+    secure: true,
     sameSite: 'lax',
-    // sameSite: 'none',
-    // secure: true,
   });
-  return sendSuccess(res, 'successfully logged in', {
-    name: user.name,
+  return res.status(200).json({
+    success: true,
+    message: 'Successfully logged in',
     id: user._id,
-    email_verified: user.email_verified,
     token,
   });
 };
