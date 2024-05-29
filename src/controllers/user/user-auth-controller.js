@@ -262,6 +262,7 @@ const logout = (req, res, next) => {
     res.clearCookie(`${token}`, { httpOnly: true });
     req.cookies[`${user.id}`] = '';
     req.cookies[`${token}`] = '';
+    req.headers.cookies = '';
     return sendSuccess(res, 'Successfully logged out');
     // return res.status(200).json({ success: true, message: 'Successfully logged out' });
   });
