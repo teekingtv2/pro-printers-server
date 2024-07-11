@@ -1,37 +1,35 @@
 const { check, validationResult } = require('express-validator');
 
 // User
-exports.validateUserSignupParams = [
-  check('name')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Your full name is missing!')
-    .isLength({ min: 6, max: 40 })
-    .withMessage('Name must be between 6 and 40 characters'),
+exports.validateRegisterMemberParams = [
+  check('title').trim().not().isEmpty().withMessage('Title is missing!'),
+  check('first_name').trim().not().isEmpty().withMessage('First name is missing!'),
+  check('last_name').trim().not().isEmpty().withMessage('last name is missing!'),
   check('email').isEmail().withMessage('Email is invalid'),
-  check('wallet').trim().not().isEmpty().withMessage('Wallet address is missing!'),
-  check('network').trim().not().isEmpty().withMessage('Chain network is missing!'),
-  check('country').trim().not().isEmpty().withMessage('Where are you located?'),
   check('phone').trim().not().isEmpty().withMessage('Phone number is missing!'),
-  check('password').trim().not().isEmpty().withMessage('Password cannot be empty'),
-];
-exports.validateUpdateProfileUserParams = [
-  check('name')
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage('Your full name is missing!')
-    .isLength({ min: 6, max: 40 })
-    .withMessage('Name must be between 6 and 40 characters'),
-  check('wallet').trim().not().isEmpty().withMessage('Wallet address is missing!'),
-  check('network').trim().not().isEmpty().withMessage('Chain network is missing!'),
+  check('address').trim().not().isEmpty().withMessage('address is missing!'),
+  check('city').trim().not().isEmpty().withMessage('city is missing!'),
+  check('state').trim().not().isEmpty().withMessage('state is missing!'),
+  check('zip_code').trim().not().isEmpty().withMessage('zip code is missing!'),
   check('country').trim().not().isEmpty().withMessage('Where are you located?'),
-  check('phone').trim().not().isEmpty().withMessage('Phone number is missing!'),
+  check('info').trim().not().isEmpty().withMessage('Tell us something about yourself'),
 ];
-exports.validateUpdateEmailAlertUserParams = [
-  check('priceAlert').trim().not().isEmpty().withMessage('Price Alert value is missing!'),
-  check('travelAlert').trim().not().isEmpty().withMessage('Travel Alert value is missing!'),
+
+exports.validateDonateParams = [
+  check('first_name').trim().not().isEmpty().withMessage('First name is missing!'),
+  check('last_name').trim().not().isEmpty().withMessage('last name is missing!'),
+  check('email').isEmail().withMessage('Email is invalid'),
+  check('phone').trim().not().isEmpty().withMessage('Phone number is missing!'),
+  check('address').trim().not().isEmpty().withMessage('address is missing!'),
+  check('amount').trim().not().isEmpty().withMessage('amount is missing!'),
+];
+exports.validateContactParams = [
+  check('first_name').trim().not().isEmpty().withMessage('First name is missing!'),
+  check('last_name').trim().not().isEmpty().withMessage('last name is missing!'),
+  check('email').isEmail().withMessage('Email is invalid'),
+  check('phone').trim().not().isEmpty().withMessage('Phone number is missing!'),
+  check('address').trim().not().isEmpty().withMessage('address is missing!'),
+  check('question').trim().not().isEmpty().withMessage('what is this query about?'),
 ];
 
 // Admin Dashboard

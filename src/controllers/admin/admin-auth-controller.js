@@ -115,11 +115,11 @@ const loginAdmin = async (req, res, next) => {
   }
 
   const token = jwt.sign({ id: existingAdmin._id }, process.env.JWT_ADMIN_SECRET_KEY, {
-    expiresIn: '5d',
+    expiresIn: '15m',
   });
   res.cookie(String(existingAdmin._id), token, {
     path: '/',
-    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5),
+    expires: new Date(Date.now() + 1000 * 60 * 15),
     httpOnly: true,
     sameSite: 'lax',
     // sameSite: 'none',

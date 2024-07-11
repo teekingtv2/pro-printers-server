@@ -126,7 +126,7 @@ const profileUpdatedEmail = async (req, res) => {
     const send_to = email;
     const reply_to = process.env.APP_EMAIL;
     const send_from = process.env.APP_EMAIL;
-    const subject = 'Your Profile Has Been Updated - Prodox Exchange';
+    const subject = `Your Profile Has Been Updated - ${process.env.APP_NAME}`;
 
     const email_body = profileUpdatedTemp(fName);
 
