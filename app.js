@@ -21,8 +21,8 @@ app.use(
       'http://localhost:5173',
       'http://localhost:3000',
       'http://localhost:5175',
-      'https://vedca-usa.vercel.app/',
-      'http://vedca-usa.vercel.app/',
+      'https://vedca-usa.vercel.app',
+      'http://vedca-usa.vercel.app',
     ],
   })
 );
