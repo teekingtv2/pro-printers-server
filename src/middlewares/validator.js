@@ -39,22 +39,6 @@ exports.validateAdmin = [
   check('password').trim().not().isEmpty().withMessage('Admin password is missing!'),
 ];
 
-exports.validateUpdateWallet = [
-  check('erc20').trim().not().isEmpty().withMessage('erc20 address is missing!'),
-  check('bitcoin').trim().not().isEmpty().withMessage('bitcoin address is missing!'),
-];
-
-exports.validateAddTransaction = [
-  check('transaction_amount').trim().not().isEmpty().withMessage('transaction amount is missing!'),
-  check('wallet_balance').trim().not().isEmpty().withMessage('wallet balance amount is missing!'),
-  check('type').trim().not().isEmpty().withMessage('transaction type is missing!'),
-];
-exports.validateUpdateUserBalance = [
-  check('deposite_balance').trim().not().isEmpty().withMessage('deposit balance is missing!'),
-  check('profit_balance').trim().not().isEmpty().withMessage('profit balance amount is missing!'),
-  check('total_balance').trim().not().isEmpty().withMessage('total balance type is missing!'),
-];
-
 exports.validateUpdatePasswordParams = [
   check('oldPassword').trim().not().isEmpty().withMessage('Old Password is missing!'),
   check('newPassword')
@@ -64,13 +48,6 @@ exports.validateUpdatePasswordParams = [
     .withMessage('New Password is missing!')
     .isLength({ min: 3, max: 20 })
     .withMessage('Password must be between 8 and 20 characters long'),
-];
-
-exports.validateAddAdPost = [
-  check('whatsapp').trim().not().isEmpty().withMessage('Whatsapp channel link is missing!'),
-  check('telegram').trim().not().isEmpty().withMessage('Telegram channel link is missing!'),
-  check('title').trim().not().isEmpty().withMessage('Ad title is missing!'),
-  check('content').trim().not().isEmpty().withMessage('Ad content is missing!'),
 ];
 
 exports.validate = (req, res, next) => {

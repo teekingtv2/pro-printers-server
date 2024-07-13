@@ -3,11 +3,11 @@ require('./db');
 const express = require('express');
 
 const websiteRouter = require('./src/routes/website/general-routes');
-const generalRouter = require('./src/routes/admin/general-routes');
 
 const adminAuthRouter = require('./src/routes/admin/admin-auth-routes');
 const adminManagementRouter = require('./src/routes/admin/admin-admin-routes');
-const userManagementRouter = require('./src/routes/admin/admin-user-routes');
+const memberManagementRouter = require('./src/routes/admin/admin-member-routes');
+const generalRouter = require('./src/routes/admin/admin-general-routes');
 
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -31,7 +31,7 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use('/api/v1/admin-auth', adminAuthRouter);
 app.use('/api/v1/admin-management', adminManagementRouter);
-app.use('/api/v1/user-management', userManagementRouter);
+app.use('/api/v1/member-management', memberManagementRouter);
 app.use('/api/v1/general', generalRouter);
 app.use('/api/website', websiteRouter);
 
@@ -42,6 +42,5 @@ app.get('/', (req, res) => {
 app.listen(process.env.APP_PORT || 7000, () => {
   connect();
   console.log(`Node version: ${process.version}`);
-  // console.log(`Jest version: ${jest.version}`);
   console.log(`Listening to requests on port ${process.env.APP_PORT}`);
 });

@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const User = require('../../models/user/User');
 
 exports.sendError = (res, error, status = 206) => {
   res.status(status).json({ success: false, error });
@@ -34,22 +33,6 @@ exports.generateOTP = () => {
 
 exports.formatCurrency = (value) => {
   return value.toLocaleString('en-US', { style: 'currency', currency: 'NGN' });
-};
-
-exports.checkUserEmailReg = async (email) => {
-  let existingUser;
-  try {
-    existingUser = await User.findOne({ email }, '-password');
-    console.log('User exists: ', existingUser);
-    if (existingUser) {
-      return existingUser;
-    } else {
-      return false;
-    }
-  } catch (err) {
-    console.log(`Could not verify email. Err:${err}`);
-    return false;
-  }
 };
 
 exports.generateSlug = (title) => {

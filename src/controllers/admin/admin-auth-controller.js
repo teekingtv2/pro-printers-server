@@ -3,37 +3,6 @@ const jwt = require('jsonwebtoken');
 const { sendError, createRandomBytes, sendSuccess } = require('../../utils/helpers');
 const ResetPasswordToken = require('../../models/user/ResetPasswordToken');
 const Admin = require('../../models/admin/Admin');
-const Wallet = require('../../models/admin/Wallet');
-
-const getWalletAddress = async (req, res) => {
-  try {
-    const wallet = await Wallet.find().limit(1);
-    if (!wallet) {
-      return sendError(res, 'Wallet data not found');
-    }
-    return sendSuccess(res, 'Successfully fetched', wallet);
-  } catch (err) {
-    return sendError(res, err.message);
-  }
-};
-
-const updateWalletAddress = async (req, res) => {
-  try {
-    const wallet = await Wallet.findById(req.params.id);
-    if (!wallet) {
-      return sendError(res, 'You do not have a valid profile');
-    }
-    const currentWallet = await Wallet.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
-      { new: true }
-    );
-    return sendSuccess(res, 'Wallet address has been successfully updated', currentWallet);
-  } catch (error) {
-    console.log(error);
-    return sendError(res, 'Unable to update Wallet address');
-  }
-};
 
 // FORGOT PASSWORD
 const forgotPassword = async (req, res, next) => {
@@ -115,11 +84,11 @@ const loginAdmin = async (req, res, next) => {
   }
 
   const token = jwt.sign({ id: existingAdmin._id }, process.env.JWT_ADMIN_SECRET_KEY, {
-    expiresIn: '15m',
+    expiresIn: '1d',
   });
   res.cookie(String(existingAdmin._id), token, {
     path: '/',
-    expires: new Date(Date.now() + 1000 * 60 * 15),
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
     httpOnly: true,
     sameSite: 'lax',
     // sameSite: 'none',
@@ -198,9 +167,6 @@ const logoutAdmin = (req, res, next) => {
 };
 
 module.exports = {
-  getWalletAddress,
-  updateWalletAddress,
-
   forgotPassword,
   resetPassword,
 

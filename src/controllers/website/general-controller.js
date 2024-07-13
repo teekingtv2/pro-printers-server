@@ -3,7 +3,7 @@ const Member = require('../../models/Member');
 const Donation = require('../../models/Donation');
 const Contact = require('../../models/Contact');
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   const {
     title,
     first_name,
@@ -33,7 +33,8 @@ const register = async (req, res) => {
   });
   try {
     await newMember.save();
-    return sendSuccess(res, 'Successfully registered. We will get in touch soon', newMember);
+    req.body = { newMember };
+    next();
   } catch (err) {
     return sendError(
       res,

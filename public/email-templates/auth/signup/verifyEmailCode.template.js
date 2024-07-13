@@ -26,34 +26,21 @@ const verifyEmailCodeTemp = (first_name, otp) => {
                         <td class="pad">
                           <div style="color:#201f42;direction:ltr;font-family:Inter, sans-serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:150%;text-align:left;mso-line-height-alt:21px;">
                             <p style="margin: 0; margin-bottom: 0px;">
-                              Welcome to ${process.env.APP_NAME} and thanks for signing up! You're one step closer to an easy and stressfree travel experience. With us, your travel freedom is borderless.
+                              Welcome to Vengo Development and Cultural Association USA! Our mission is to empower our communities through health, education, cultural exchange, and sustainable development. We believe in the power of collaboration and inclusivity, and we are dedicated to creating positive change in the world. Our members are based in the U.S.A and Canada.
                             </p>
                             <p style="margin: 0; margin-bottom: 0px;">&nbsp;</p>
                             <p style="margin: 0; margin-bottom: 0px;">
-                              To get started, veriify your email account by using the One Time Passsword code seen below. 
+                               Our mission is to empower our communities through health, education, cultural exchange, and sustainable development. We believe in the power of collaboration and inclusivity, and we are dedicated to creating positive change in the world.
+                            </p>
+                            <p style="margin: 0; margin-bottom: 0px;">&nbsp;</p>
+                            <p style="margin: 0; margin-bottom: 0px;">
+                               Now that you have joined us, you are in for a good ride. We will reach out to you soon.
                             </p>
                             <p style="margin: 0; margin-bottom: 0px;">&nbsp;</p>
                           </div>
                         </td>
                       </tr>
-                    </table>
-                    <table class="button_block block-3" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
-                      <tr>
-                        <td class="pad" style="padding-bottom:15px;padding-top:20px;text-align:center;">
-                          <div class="alignment" align="center"><!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://www.example.com" style="height:46px;width:170px;v-text-anchor:middle;" arcsize="0%" strokeweight="0.75pt" strokecolor="#201F42" fillcolor="#201f42"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#ffffff; font-family:Georgia, serif; font-size:17px"><![endif]--><a style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#201f42;border-radius:0px;width:auto;border-top:1px solid #201F42;font-weight:400;border-right:1px solid #201F42;border-bottom:1px solid #201F42;border-left:1px solid #201F42;padding-top:5px;padding-bottom:5px;font-family:'Noto Serif', Georgia, serif;font-size:17px;text-align:center;cursor: normal;mso-border-alt:none;word-break:keep-all;"><span style="padding-left:70px;padding-right:70px;font-size:24px;display:inline-block;"><span style="word-break: break-word; line-height: 34px;"><strong>${otp}</strong></span></span></a><!--[if mso]></center></v:textbox></v:roundrect><![endif]--></div>
-                        </td>
-                      </tr>
-                    </table>
-                    
-                    <table class="paragraph_block block-5" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
-                      <tr>
-                        <td class="pad" style="padding-top:10px;">
-                          <div style="color:#201f42;direction:ltr;font-family:Inter, sans-serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:150%;text-align:left;mso-line-height-alt:21px;">
-                            <p style="margin: 0;">The verification code will be valid for 30 minutes. Please do not share this code with anyone. Contact us if you do not recognize tis activity. Welcome to ${process.env.APP_NAME} once again.</p>
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
+                    </table>    
                   </td>
                 </tr>
               </tbody>
