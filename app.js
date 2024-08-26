@@ -43,6 +43,8 @@ app.get('/', (req, res) => {
 
 app.listen(process.env.APP_PORT || 7000, () => {
   connect();
-  console.log(`Node version: ${process.version}`);
+  setInterval(() => {
+    console.log('Server is running');
+  }, 600000);
   console.log(`Listening to requests on port ${process.env.APP_PORT}`);
 });
