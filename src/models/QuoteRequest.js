@@ -2,16 +2,12 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const memberSchema = new Schema({
-  title: {
+const quoteRequestSchema = new Schema({
+  name: {
     type: String,
     required: true,
   },
-  first_name: {
-    type: String,
-    required: true,
-  },
-  last_name: {
+  phone: {
     type: String,
     required: true,
   },
@@ -19,7 +15,15 @@ const memberSchema = new Schema({
     type: String,
     required: true,
   },
-  phone: {
+  product: {
+    type: String,
+    required: true,
+  },
+  doc: {
+    type: String,
+    required: true,
+  },
+  company: {
     type: String,
     required: true,
   },
@@ -31,25 +35,21 @@ const memberSchema = new Schema({
     type: String,
     required: true,
   },
-  state: {
-    type: String,
-    required: true,
-  },
-  zip_code: {
-    type: String,
-    required: true,
-  },
   country: {
     type: String,
     required: true,
   },
-  info: {
+  product_description: {
     type: String,
     required: true,
   },
-  status: {
+  quantity: {
     type: String,
-    default: 'Pending',
+    required: true,
+  },
+  delivery_date: {
+    type: String,
+    required: true,
   },
   createdAt: {
     type: Date,
@@ -57,4 +57,4 @@ const memberSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model('Member', memberSchema);
+module.exports = mongoose.model('QuoteRequest', quoteRequestSchema);

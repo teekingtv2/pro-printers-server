@@ -1,37 +1,154 @@
-const { sendError, sendSuccess } = require('../../utils/helpers');
-const Donation = require('../../models/Donation');
+const { sendError, sendSuccess, generateSlug } = require('../../utils/helpers');
+const Project = require('../../models/Project');
+const Post = require('../../models/Post');
+const Admin = require('../../models/admin/Admin');
 const Contact = require('../../models/Contact');
 
-const fetchAllDonations = async (req, res) => {
-  try {
-    const donations = await Donation.find().limit(req.query.limit);
-    return sendSuccess(res, 'Successfully fetched the all donations', donations);
-  } catch (err) {
-    console.log(err);
-    return sendError(res, `Unable to fetch all donations. Error - ${err}`);
-  }
-};
+const addPost = async (req, res) => {
+  const adminId = req.id;
+  const slug = generateSlug(req.body.title);
 
-const fetchSingleDonation = async (req, res, next) => {
-  const { id } = req.params;
+  console.log('post req body', req.body);
+  console.log('post req files', req.files);
+
   try {
-    const donation = await Donation.findById(id);
-    if (!donation) {
-      return sendError(res, 'Ad post data does not exist');
+    const admin = await Admin.findById(adminId);
+    if (!admin) {
+      return sendError(res, `Cannot find logged in admin data.`);
     }
-    return sendSuccess(res, 'Successfully fetched the ad post', donation);
-  } catch (err) {
-    return sendError(res, `Unable to fetch ad post. Error - ${err}`);
+    console.log('admin', admin);
+    const rawImagesArray = req.files['cover'];
+    if (!rawImagesArray) {
+      return sendError(res, 'Please add the cover photo for this post');
+    }
+    const namedImage = rawImagesArray.map((a) => a.filename);
+    const stringnifiedCoverImage = JSON.stringify(namedImage);
+    const cover = stringnifiedCoverImage.replace(/[^a-zA-Z0-9_.,]/g, '');
+    const { title, category, content } = req.body;
+    console.log('cover: ', cover);
+
+    const newPost = new Post({
+      title,
+      slug,
+      category,
+      content,
+      cover,
+      published_by: admin.username,
+    });
+    try {
+      await newPost.save();
+      return sendSuccess(res, 'Your post has been successfuy published', newPost);
+    } catch (err) {
+      return sendError(res, `Unable to publish the new post. Error - ${err}`);
+    }
+  } catch (error) {
+    return sendError(res, `Unable to verify logged in admin. Error - ${err}`);
   }
 };
 
-const deleteDonation = async (req, res) => {
+const updatePost = async (req, res) => {
+  const reqFiles = req.files;
+  if (reqFiles) {
+    if (reqFiles['cover']) {
+      const rawImagesArray = req.files['cover'];
+      const namedImage = rawImagesArray.map((a) => a.filename);
+      const stringnifiedCoverImage = JSON.stringify(namedImage);
+      const cover = stringnifiedCoverImage.replace(/[^a-zA-Z0-9_.,]/g, '');
+      req.body.cover = cover;
+    }
+  }
   try {
-    await Donation.findByIdAndDelete(req.params.id);
-    return sendSuccess(res, 'Successfully deleted the ad post');
+    const savedPost = await Post.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    return sendSuccess(res, 'Your post has been successfuy updated', savedPost);
   } catch (err) {
     console.log(err);
-    return sendError(res, `Unable to delete the ad post. Error - ${err}`);
+    return sendError(res, 'Unable to update the post data');
+  }
+};
+
+const deletePost = async (req, res) => {
+  try {
+    await Post.findByIdAndDelete(req.params.id);
+    return sendSuccess(res, 'Successfully deleted the post');
+  } catch (err) {
+    console.log(err);
+    return sendError(res, `Unable to delete the post. Error - ${err}`);
+  }
+};
+
+const addProject = async (req, res) => {
+  const rawCoverArray = req.files['cover'];
+  if (!rawCoverArray) {
+    return sendError(res, 'Please add the cover photo for this post');
+  }
+  const rawImagesArray = req.files['images'];
+  if (!rawImagesArray) {
+    return sendError(res, 'Please add the cover photo for this post');
+  }
+  const namedCover = rawCoverArray.map((a) => a.filename);
+  const stringnifiedCoverCover = JSON.stringify(namedCover);
+  const cover = stringnifiedCoverCover.replace(/[^a-zA-Z0-9_.,]/g, '');
+
+  const namedImages = rawImagesArray.map((a) => a.filename);
+  const stringnifiedImages = JSON.stringify(namedImages);
+  const formmatedImages = stringnifiedImages.replace(/[^a-zA-Z0-9_.,]/g, '');
+  const images = formmatedImages.replace(/[,]/g, ', ');
+  const { title, description } = req.body;
+  console.log('cover: ', cover);
+  console.log('images: ', images);
+
+  const newProject = new Project({
+    title,
+    description,
+    cover,
+    images,
+  });
+  try {
+    await newProject.save();
+    return sendSuccess(res, 'Your project has been successfuy published', newProject);
+  } catch (err) {
+    return sendError(res, `Unable to publish the new project. Error - ${err}`);
+  }
+};
+
+const updateProject = async (req, res) => {
+  if (req.files['cover']) {
+    const namedImage = rawImagesArray.map((a) => a.filename);
+    const stringnifiedCoverImage = JSON.stringify(namedImage);
+    const cover = stringnifiedCoverImage.replace(/[^a-zA-Z0-9_.,]/g, '');
+    req.body.cover = cover;
+  }
+  if (req.files['images']) {
+    const namedImages = rawImagesArray.map((a) => a.filename);
+    const stringnifiedImages = JSON.stringify(namedImages);
+    const formmatedImages = stringnifiedImages.replace(/[^a-zA-Z0-9_.,]/g, '');
+    const images = formmatedImages.replace(/[,]/g, ', ');
+    req.body.images = images;
+  }
+  try {
+    const savedProject = await Project.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    return sendSuccess(res, 'Your project has been successfuy updated', savedProject);
+  } catch (err) {
+    console.log(err);
+    return sendError(res, 'Unable to update the project data');
+  }
+};
+
+const deleteProject = async (req, res) => {
+  try {
+    await Project.findByIdAndDelete(req.params.id);
+    return sendSuccess(res, 'Successfully deleted the project data');
+  } catch (err) {
+    console.log(err);
+    return sendError(res, `Unable to delete the project data. Error - ${err}`);
   }
 };
 
@@ -69,9 +186,14 @@ const deleteContact = async (req, res) => {
 };
 
 module.exports = {
-  fetchAllDonations,
-  fetchSingleDonation,
-  deleteDonation,
+  addPost,
+  updatePost,
+  deletePost,
+
+  addProject,
+  updateProject,
+  deleteProject,
+
   fetchAllContacts,
   fetchSingleContact,
   deleteContact,

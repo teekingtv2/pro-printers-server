@@ -1,90 +1,62 @@
 const { sendError, sendSuccess } = require('../../utils/helpers');
-const Member = require('../../models/Member');
-const Donation = require('../../models/Donation');
 const Contact = require('../../models/Contact');
+const Project = require('../../models/Project');
+const Post = require('../../models/Post');
+const QuoteRequest = require('../../models/QuoteRequest');
 
-const register = async (req, res, next) => {
-  const {
-    title,
-    first_name,
-    last_name,
-    email,
-    phone,
-    address,
-    city,
-    state,
-    zip_code,
-    country,
-    info,
-  } = req.body;
-
-  const newMember = new Member({
-    title,
-    first_name,
-    last_name,
-    email,
-    phone,
-    address,
-    city,
-    state,
-    zip_code,
-    country,
-    info,
-  });
+const fetchAllProjects = async (req, res) => {
   try {
-    await newMember.save();
-    req.body = { newMember };
-    next();
+    const projects = await Project.find().limit(req.query.limit);
+    return sendSuccess(res, 'Successfully fetched the all projects', projects);
   } catch (err) {
-    return sendError(
-      res,
-      `Unable to create the membr record onto our database. Please try again. Error - ${err}`
-    );
+    console.log(err);
+    return sendError(res, `Unable to fetch all projects. Error - ${err}`);
   }
 };
 
-const donate = async (req, res) => {
-  const { first_name, last_name, email, phone, address, amount } = req.body;
-
-  const newDonation = new Donation({
-    first_name,
-    last_name,
-    email,
-    phone,
-    address,
-    amount,
-  });
+const fetchSingleProject = async (req, res) => {
+  const { id } = req.params;
   try {
-    await newDonation.save();
-    return sendSuccess(
-      res,
-      'Your donation has been successfuy received with masive thanks. We will get in touch soon',
-      newDonation
-    );
+    const project = await Project.findById(id);
+    if (!project) {
+      return sendError(res, 'Ad post data does not exist');
+    }
+    return sendSuccess(res, 'Successfully fetched the ad post', project);
   } catch (err) {
-    return sendError(
-      res,
-      `Unable to store the donation record on the database, but it has been successfully receive with thanks. Error - ${err}`
-    );
+    return sendError(res, `Unable to fetch ad post. Error - ${err}`);
+  }
+};
+
+const fetchAllPosts = async (req, res) => {
+  try {
+    const posts = await Post.find().limit(req.query.limit);
+    return sendSuccess(res, 'Successfully fetched the all posts', posts);
+  } catch (err) {
+    console.log(err);
+    return sendError(res, `Unable to fetch all posts. Error - ${err}`);
+  }
+};
+
+const fetchSinglePost = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const post = await Post.findById(id);
+    if (!post) {
+      return sendError(res, 'Post data does not exist');
+    }
+    return sendSuccess(res, 'Successfully fetched the post', post);
+  } catch (err) {
+    return sendError(res, `Unable to fetch post. Error - ${err}`);
   }
 };
 
 const contactUs = async (req, res) => {
-  const { first_name, last_name, email, phone, address, question } = req.body;
-
-  const newContact = new Contact({
-    first_name,
-    last_name,
-    email,
-    phone,
-    address,
-    question,
-  });
+  const newContact = new Contact({ ...req.body });
   try {
     await newContact.save();
     return sendSuccess(
       res,
-      'Your query has been successfuy received. We will get in touch soon',
+      'Your query has been successfully received. We will get in touch soon',
       newContact
     );
   } catch (err) {
@@ -92,8 +64,36 @@ const contactUs = async (req, res) => {
   }
 };
 
+const requestQuote = async (req, res) => {
+  const reqFiles = req.files;
+  if (reqFiles) {
+    if (reqFiles['doc']) {
+      const rawDocsArray = req.files['doc'];
+      const namedDoc = rawDocsArray.map((a) => a.filename);
+      const stringnifiedDoc = JSON.stringify(namedDoc);
+      const doc = stringnifiedDoc.replace(/[^a-zA-Z0-9_.,]/g, '');
+      req.body.doc = doc;
+    }
+  }
+  console.log('re.body', req.body)
+  const newRequest = new QuoteRequest({ ...req.body });
+  try {
+    await newRequest.save();
+    return sendSuccess(
+      res,
+      'Your quotation request has been successfully received. We will get in touch soon',
+      newRequest
+    );
+  } catch (err) {
+    return sendError(res, `Unable to send your request. Please try again. Error - ${err}`);
+  }
+};
+
 module.exports = {
-  register,
-  donate,
+  fetchAllProjects,
+  fetchSingleProject,
+  fetchAllPosts,
+  fetchSinglePost,
   contactUs,
+  requestQuote
 };

@@ -1,27 +1,25 @@
 const express = require('express');
 
+const { validate, validateContactParams } = require('../../middlewares/validator');
 const {
-  validate,
-  validateRegisterMemberParams,
-  validateDonateParams,
-  validateContactParams,
-} = require('../../middlewares/validator');
-const { validateNewMember } = require('../../middlewares/website');
-const { register, donate, contactUs } = require('../../controllers/website/general-controller');
-const { registeredEmail } = require('../../services/emailServices');
+  contactUs,
+  fetchAllProjects,
+  fetchSingleProject,
+  fetchAllPosts,
+  fetchSinglePost,
+  requestQuote,
+} = require('../../controllers/website/general-controller');
+const { quoteRequestImageUpload } = require('../../utils/helpers/files');
 
 const router = express.Router();
 
-router.post(
-  '/register',
-  validateNewMember,
-  validateRegisterMemberParams,
-  validate,
-  register,
-  registeredEmail
-);
-router.post('/donate', validateDonateParams, validate, donate);
 router.post('/contact', validateContactParams, validate, contactUs);
-router.get('/gallery', contactUs);
+router.post('/request-quote', quoteRequestImageUpload, requestQuote);
+
+router.get('/all-projects', fetchAllProjects);
+router.get('/single-project/:id', fetchSingleProject);
+
+router.get('/all-posts', fetchAllPosts);
+router.get('/single-post/:id', fetchSinglePost);
 
 module.exports = router;

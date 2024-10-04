@@ -1,35 +1,23 @@
 const { check, validationResult } = require('express-validator');
 
 // User
-exports.validateRegisterMemberParams = [
-  check('title').trim().not().isEmpty().withMessage('Title is missing!'),
-  check('first_name').trim().not().isEmpty().withMessage('First name is missing!'),
-  check('last_name').trim().not().isEmpty().withMessage('last name is missing!'),
-  check('email').isEmail().withMessage('Email is invalid'),
-  check('phone').trim().not().isEmpty().withMessage('Phone number is missing!'),
-  check('address').trim().not().isEmpty().withMessage('address is missing!'),
-  check('city').trim().not().isEmpty().withMessage('city is missing!'),
-  check('state').trim().not().isEmpty().withMessage('state is missing!'),
-  check('zip_code').trim().not().isEmpty().withMessage('zip code is missing!'),
-  check('country').trim().not().isEmpty().withMessage('Where are you located?'),
-  check('info').trim().not().isEmpty().withMessage('Tell us something about yourself'),
+exports.validateAddPostParams = [
+  check('title').trim().not().isEmpty().withMessage('Post title is missing!'),
+  check('category').trim().not().isEmpty().withMessage('Post category is missing!'),
+  check('content').trim().not().isEmpty().withMessage('Post content is missing!'),
 ];
 
-exports.validateDonateParams = [
-  check('first_name').trim().not().isEmpty().withMessage('First name is missing!'),
-  check('last_name').trim().not().isEmpty().withMessage('last name is missing!'),
-  check('email').isEmail().withMessage('Email is invalid'),
-  check('phone').trim().not().isEmpty().withMessage('Phone number is missing!'),
-  check('address').trim().not().isEmpty().withMessage('address is missing!'),
-  check('amount').trim().not().isEmpty().withMessage('amount is missing!'),
+exports.validateAddProjectParams = [
+  check('title').trim().not().isEmpty().withMessage('Project title is missing!'),
+  check('description').trim().not().isEmpty().withMessage('Project description is missing!'),
 ];
+
 exports.validateContactParams = [
   check('first_name').trim().not().isEmpty().withMessage('First name is missing!'),
   check('last_name').trim().not().isEmpty().withMessage('last name is missing!'),
   check('email').isEmail().withMessage('Email is invalid'),
   check('phone').trim().not().isEmpty().withMessage('Phone number is missing!'),
-  check('address').trim().not().isEmpty().withMessage('address is missing!'),
-  check('question').trim().not().isEmpty().withMessage('what is this query about?'),
+  check('message').trim().not().isEmpty().withMessage('what is this query about?'),
 ];
 
 // Admin Dashboard

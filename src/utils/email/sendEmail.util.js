@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-const sendEmail = (subject, message, send_to, send_from, reply_to) => {
+const sendEmail = (subject, message, send_to) => {
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -14,9 +14,9 @@ const sendEmail = (subject, message, send_to, send_from, reply_to) => {
   });
 
   const options = {
-    from: send_from,
+    from: `${process.env.APP_NAME} <${process.env.APP_EMAIL}>`,
     to: send_to,
-    replyTo: reply_to,
+    replyTo: process.env.APP_EMAIL,
     subject: subject,
     html: message,
   };

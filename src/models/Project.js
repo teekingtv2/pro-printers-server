@@ -1,24 +1,21 @@
 const mongoose = require('mongoose');
+
 const Schema = mongoose.Schema;
 
-const adSchema = new Schema({
+const projectSchema = new Schema({
   title: {
     type: String,
     required: true,
   },
-  whatsapp: {
+  description: {
     type: String,
     required: true,
   },
-  telegram: {
+  cover: {
     type: String,
     required: true,
   },
-  slug: {
-    type: String,
-    required: true,
-  },
-  content: {
+  images: {
     type: String,
     required: true,
   },
@@ -28,4 +25,4 @@ const adSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model('Ad', adSchema);
+module.exports = mongoose.model('Project', projectSchema);

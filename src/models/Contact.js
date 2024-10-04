@@ -19,11 +19,7 @@ const contactSchema = new Schema({
     type: String,
     required: true,
   },
-  address: {
-    type: String,
-    required: true,
-  },
-  question: {
+  message: {
     type: String,
     required: true,
   },

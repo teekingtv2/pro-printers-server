@@ -2,30 +2,34 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const donationSchema = new Schema({
-  first_name: {
+const postSchema = new Schema({
+  title: {
     type: String,
     required: true,
   },
-  last_name: {
+  slug: {
     type: String,
     required: true,
   },
-  email: {
+  category: {
     type: String,
     required: true,
   },
-  phone: {
+  published_by: {
     type: String,
     required: true,
   },
-  address: {
+  cover: {
     type: String,
     required: true,
   },
-  amount: {
-    type: Number,
+  content: {
+    type: String,
     required: true,
+  },
+  status: {
+    type: String,
+    default: 'published',
   },
   createdAt: {
     type: Date,
@@ -33,4 +37,4 @@ const donationSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model('Donation', donationSchema);
+module.exports = mongoose.model('Post', postSchema);
