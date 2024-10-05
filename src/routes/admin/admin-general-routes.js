@@ -9,6 +9,9 @@ const {
   fetchAllContacts,
   fetchSingleContact,
   deleteContact,
+  deleteQuoteRequest,
+  fetchSingleQuoteRequest,
+  fetchQuoteRequests,
 } = require('../../controllers/admin/admin-general-controller');
 const { verifyAdminLoginToken } = require('../../controllers/admin/admin-auth-controller');
 const {
@@ -48,5 +51,9 @@ router.get('/single-project/:id', verifyAdminLoginToken, fetchSingleProject);
 router.get('/all-contacts', verifyAdminLoginToken, fetchAllContacts);
 router.get('/single-contact/:id', verifyAdminLoginToken, fetchSingleContact);
 router.delete('/delete-contact/:id', verifyAdminLoginToken, deleteContact);
+
+router.get('/quote-requests', verifyAdminLoginToken, fetchQuoteRequests);
+router.get('/single-request/:id', verifyAdminLoginToken, fetchSingleQuoteRequest);
+router.delete('/delete-request/:id', verifyAdminLoginToken, deleteQuoteRequest);
 
 module.exports = router;

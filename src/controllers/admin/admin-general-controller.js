@@ -3,6 +3,7 @@ const Project = require('../../models/Project');
 const Post = require('../../models/Post');
 const Admin = require('../../models/admin/Admin');
 const Contact = require('../../models/Contact');
+const QuoteRequest = require('../../models/QuoteRequest');
 
 const addPost = async (req, res) => {
   const adminId = req.id;
@@ -155,7 +156,7 @@ const deleteProject = async (req, res) => {
 const fetchAllContacts = async (req, res) => {
   try {
     const contacts = await Contact.find().limit(req.query.limit);
-    return sendSuccess(res, 'Successfully fetched the all contact messages', contacts);
+    return sendSuccess(res, 'Successfully fetched the contact messages', contacts);
   } catch (err) {
     console.log(err);
     return sendError(res, `Unable to fetch all contact messages. Error - ${err}`);
@@ -185,6 +186,39 @@ const deleteContact = async (req, res) => {
   }
 };
 
+const fetchQuoteRequests = async (req, res) => {
+  try {
+    const requests = await QuoteRequest.find().limit(req.query.limit);
+    return sendSuccess(res, 'Successfully fetched the all quote requests', requests);
+  } catch (err) {
+    console.log(err);
+    return sendError(res, `Unable to perform the request. Error - ${err}`);
+  }
+};
+
+const fetchSingleQuoteRequest = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const request = await QuoteRequest.findById(id);
+    if (!request) {
+      return sendError(res, 'Data does not exist');
+    }
+    return sendSuccess(res, 'Successfully fetched the data', request);
+  } catch (err) {
+    return sendError(res, `Unable to perform the request. Error - ${err}`);
+  }
+};
+
+const deleteQuoteRequest = async (req, res) => {
+  try {
+    await QuoteRequest.findByIdAndDelete(req.params.id);
+    return sendSuccess(res, 'Successfully deleted the data');
+  } catch (err) {
+    console.log(err);
+    return sendError(res, `Unable to perform the request. Error - ${err}`);
+  }
+};
+
 module.exports = {
   addPost,
   updatePost,
@@ -197,4 +231,8 @@ module.exports = {
   fetchAllContacts,
   fetchSingleContact,
   deleteContact,
+
+  fetchQuoteRequests,
+  fetchSingleQuoteRequest,
+  deleteQuoteRequest
 };
